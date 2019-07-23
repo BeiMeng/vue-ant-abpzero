@@ -68,6 +68,15 @@ import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
 import { getSmsCaptcha, get2step } from '@/api/login'
 
+
+import { TokenService } from '@/abpZero/abp-vue-module/auth/token.service'
+import { UtilsService } from '@/abpZero/abp-vue-module/utils/utils.service'
+import { AppConsts } from '@/abpZero/shared/AppConsts'
+import { TokenAuthServiceProxy } from '@/abpZero/shared/service-proxies/TokenAuthServiceProxy'
+let _tokenAuthServiceProxy = new TokenAuthServiceProxy()
+let _tokenService = new TokenService()
+let _utilsService = new UtilsService()
+
 export default {
   components: {
     TwoStepCaptcha
@@ -91,13 +100,13 @@ export default {
     }
   },
   created () {
-    get2step({ })
-      .then(res => {
-        this.requiredTwoStepCaptcha = res.result.stepCode
-      })
-      .catch(() => {
-        this.requiredTwoStepCaptcha = false
-      })
+    // get2step({ })
+    //   .then(res => {
+    //     this.requiredTwoStepCaptcha = res.result.stepCode
+    //   })
+    //   .catch(() => {
+    //     this.requiredTwoStepCaptcha = false
+    //   })
     // this.requiredTwoStepCaptcha = true
   },
   methods: {
@@ -133,16 +142,35 @@ export default {
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
           console.log('login form', values)
-          const loginParams = { ...values }
-          delete loginParams.username
-          loginParams[!state.loginType ? 'email' : 'username'] = values.username
-          loginParams.password = md5(values.password)
-          Login(loginParams)
-            .then((res) => this.loginSuccess(res))
-            .catch(err => this.requestFailed(err))
-            .finally(() => {
-              state.loginBtn = false
-            })
+          // const loginParams = { ...values }
+          // delete loginParams.username
+          // loginParams[!state.loginType ? 'email' : 'username'] = values.username
+          // loginParams.password = md5(values.password)
+          // Login(loginParams)
+          //   .then((res) => this.loginSuccess(res))
+          //   .catch(err => this.requestFailed(err))
+          //   .finally(() => {
+          //     state.loginBtn = false
+          //   })
+            //abp.ui.setBusy()
+            _tokenAuthServiceProxy.authenticate(
+              {
+                usernameOrEmailAddress: values.username,
+                password: values.password
+              }
+            )
+              .then(result => {
+                //abp.ui.clearBusy()
+                let tokenExpireDate = this.rememberMe ? (new Date(new Date().getTime() + 1000 * result.expireInSeconds)) : undefined
+                _tokenService.setToken(result.accessToken, tokenExpireDate)
+                _utilsService.setCookieValue(AppConsts.authorization.encrptedAuthTokenName, result.encryptedAccessToken, tokenExpireDate, abp.appPath)// PC端signalr使用
+                location.href = '/' // 登陆成功后，整个web程序重新加载
+              })
+              .catch(error => {
+                //abp.ui.clearBusy()
+                console.error(error)
+              })
+
         } else {
           setTimeout(() => {
             state.loginBtn = false

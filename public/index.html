@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>logo.png">
+    <link href="<%=htmlWebpackPlugin.options.root%>/static/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+    <link href="<%=htmlWebpackPlugin.options.root%>/static/FreezeUI/freeze-ui.min.css" rel="stylesheet" type="text/css" />       
     <title>大熊精密</title>
   </head>
   <body>
@@ -15,5 +17,15 @@
 
     </div>
     <!-- built files will be auto injected -->
+    
+    <!-- signalr -->
+    <!-- <script src="<%=htmlWebpackPlugin.options.root%>/static/signalr/signalr.min.js" type="text/javascript"></script> -->
+    <!-- Abp Zero -->
+    <script src="<%=htmlWebpackPlugin.options.root%>/static/sweetalert2/dist/sweetalert2.min.js" type="text/javascript"></script>
+    <script src="<%=htmlWebpackPlugin.options.root%>/static/FreezeUI/freeze-ui.js" type="text/javascript"></script>
+    <script src="<%=htmlWebpackPlugin.options.root%>/static/abp-web-resources/abp.js" type="text/javascript"></script>
+    <script src="<%=htmlWebpackPlugin.options.root%>/static/abp-web-resources/abp.sweet-alert.js" type="text/javascript"></script>
+    <script src="<%=htmlWebpackPlugin.options.root%>/static/abp-web-resources/abp.notify.js" type="text/javascript"></script>
+    <script src="<%=htmlWebpackPlugin.options.root%>/static/abp-web-resources/abp.freeze-ui.js" type="text/javascript"></script>     
   </body>
 </html>
