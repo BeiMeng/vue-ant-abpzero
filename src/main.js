@@ -21,8 +21,8 @@ Vue.config.productionTip = false
 //Vue.use(VueAxios)
 
 
-// import * as _ from 'lodash'
-// window._=_;
+import * as _ from 'lodash'
+window._=_;
 import * as moment from 'moment';
 window.moment=moment;
 import abpMixins from '@/abpZero/shared/abpMixin'

@@ -3,8 +3,14 @@ const getters = {
   theme: state => state.app.theme,
   color: state => state.app.color,
   token: state => state.user.token,
-  avatar: state => state.user.avatar,
-  nickname: state => state.user.name,
+  avatar: state => {
+    if(state.appSession.user.profilePictureId){
+      return '/avatar2.jpg'
+    }else{
+      return '/avatar2.jpg'
+    }
+  },
+  nickname: state => state.appSession.user.name,
   welcome: state => state.user.welcome,
   roles: state => state.user.roles,
   userInfo: state => state.user.info,
