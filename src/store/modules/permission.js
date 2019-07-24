@@ -1,5 +1,6 @@
 import { asyncRouterMap, constantRouterMap } from '@/config/router.config'
-
+import { PermissionCheckerService } from '@/abpZero/abp-vue-module/auth/permission-checker.service';
+let _permission=new PermissionCheckerService();
 /**
  * 过滤账户是否拥有某一个权限，并将菜单从加载列表移除
  *
@@ -9,14 +10,15 @@ import { asyncRouterMap, constantRouterMap } from '@/config/router.config'
  */
 function hasPermission (permission, route) {
   if (route.meta && route.meta.permission) {
-    let flag = false
-    for (let i = 0, len = permission.length; i < len; i++) {
-      flag = route.meta.permission.includes(permission[i])
-      if (flag) {
-        return true
-      }
-    }
-    return false
+    // let flag = false
+    // for (let i = 0, len = permission.length; i < len; i++) {
+    //   flag = route.meta.permission.includes(permission[i])
+    //   if (flag) {
+    //     return true
+    //   }
+    // }
+    // return false
+    return _permission.isGrantedAny(route.meta.permission);
   }
   return true
 }
@@ -37,11 +39,11 @@ function hasRole(roles, route) {
   }
 }
 
-function filterAsyncRouter (routerMap, roles) {
+function filterAsyncRouter (routerMap, permissionList) {
   const accessedRouters = routerMap.filter(route => {
-    if (hasPermission(roles.permissionList, route)) {
+    if (hasPermission(permissionList, route)) {
       if (route.children && route.children.length) {
-        route.children = filterAsyncRouter(route.children, roles)
+        route.children = filterAsyncRouter(route.children, permissionList)
       }
       return true
     }
@@ -53,19 +55,21 @@ function filterAsyncRouter (routerMap, roles) {
 const permission = {
   state: {
     routers: constantRouterMap,
-    addRouters: []
+    addRouters: [],
+    hasAddRouters:false
   },
   mutations: {
     SET_ROUTERS: (state, routers) => {
       state.addRouters = routers
       state.routers = constantRouterMap.concat(routers)
+      state.hasAddRouters=true
     }
   },
   actions: {
     GenerateRoutes ({ commit }, data) {
       return new Promise(resolve => {
-        const { roles } = data
-        const accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
+        const { permissionList } = data
+        const accessedRouters = filterAsyncRouter(asyncRouterMap, permissionList)
         commit('SET_ROUTERS', accessedRouters)
         resolve()
       })

@@ -45,7 +45,8 @@
 <script>
 import NoticeIcon from '@/components/NoticeIcon'
 import { mapActions, mapGetters } from 'vuex'
-
+import { AppAuthService } from '@/abpZero/app/shared/common/auth/app-auth.service'
+let _appAuthService = new AppAuthService()
 export default {
   name: 'UserMenu',
   components: {
@@ -61,14 +62,15 @@ export default {
         title: '提示',
         content: '真的要注销登录吗 ?',
         onOk () {
-          return that.Logout({}).then(() => {
-            window.location.reload()
-          }).catch(err => {
-            that.$message.error({
-              title: '错误',
-              description: err.message
-            })
-          })
+          // return that.Logout({}).then(() => {
+          //   window.location.reload()
+          // }).catch(err => {
+          //   that.$message.error({
+          //     title: '错误',
+          //     description: err.message
+          //   })
+          // })
+          _appAuthService.logout(true, '/')
         },
         onCancel () {
         }

@@ -18,13 +18,13 @@ export const asyncRouterMap = [
         redirect: '/dashboard/analysis',
         component: RouteView,
         hideChildrenInMenu: true, //设置子项隐藏
-        meta: { title: '首页', keepAlive: true, icon: bxAnaalyse, permission: [ 'dashboard' ] },
+        meta: { title: '首页', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages.Tenant.Dashboard' ] },
         children: [
           {
             path: '/dashboard/analysis',
             name: 'Analysis',
             component: () => import('@/views/app/dashboard/Analysis'),
-            meta: { title: '分析页', keepAlive: false, permission: [ 'dashboard' ] }
+            meta: { title: '分析页', keepAlive: false, permission: [ 'Pages.Tenant.Dashboard' ] }
           },
           // 外部链接
           {
