@@ -99,6 +99,7 @@
       </div>
     </a-card>
 
+
     <div class="antd-pro-pages-dashboard-analysis-twoColLayout" :class="isDesktop() ? 'desktop' : ''">
       <a-row :gutter="24">
         <a-col :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
@@ -193,7 +194,7 @@
             <div>
               <!-- style="width: calc(100% - 240px);" -->
               <div>
-                <v-chart :force-fit="true" :height="405" :data="pieData" :scale="pieScale">
+                <v-chart :force-fit="true" :height="300" :data="pieData" :scale="pieScale">
                   <v-tooltip :showTitle="false" dataKey="item*percent" />
                   <v-axis />
                   <!-- position="right" :offsetX="-140" -->
@@ -208,6 +209,7 @@
         </a-col>
       </a-row>
     </div>
+
   </div>
 </template>
 

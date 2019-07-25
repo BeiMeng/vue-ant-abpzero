@@ -6,7 +6,7 @@
  *
  * 当需要更多组件依赖时，在该文件加入即可
  */
-import Vue from 'vue'
+//import Vue from 'vue'
 import {
   LocaleProvider,
   Layout,

@@ -1,4 +1,4 @@
-import Vue from 'vue'
+//import Vue from 'vue'
 import store from '@/store/'
 import {
   ACCESS_TOKEN,

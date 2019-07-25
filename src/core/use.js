@@ -1,4 +1,4 @@
-import Vue from 'vue'
+//import Vue from 'vue'
 import VueStorage from 'vue-ls'
 import config from '@/config/defaultSettings'
 
@@ -9,9 +9,9 @@ import VueCropper from 'vue-cropper'
 import 'ant-design-vue/dist/antd.less'
 
 
-import Element from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
-Vue.use(Element, { size: 'medium', zIndex: 3000 });
+// import Element from 'element-ui';
+// import 'element-ui/lib/theme-chalk/index.css';
+ Vue.use(ELEMENT, { size: 'medium', zIndex: 3000 });
 
 // ext library
 import VueClipboard from 'vue-clipboard2'
