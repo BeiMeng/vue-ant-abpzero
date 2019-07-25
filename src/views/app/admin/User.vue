@@ -8,19 +8,23 @@
   <div class="admim_user">
       <a-card :bordered="false">
             <a-table :columns="columns" :dataSource="data">
-                <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
-                <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
+                <a slot="name" slot-scope="aa, record" href="javascript:;">
+                    {{record.name+record.age}}
+                </a>
+                <span slot="customTitle">
+                    <a-icon type="smile-o" /> Name
+                </span>
                 <span slot="tags" slot-scope="tags">
-                <a-tag v-for="tag in tags" color="blue" :key="tag">{{tag}}</a-tag>
+                    <a-tag v-for="tag in tags" color="blue" :key="tag">{{tag}}</a-tag>
                 </span>
                 <span slot="action" slot-scope="text, record">
-                <a href="javascript:;">Invite 一 {{record.name}}</a>
-                <a-divider type="vertical" />
-                <a href="javascript:;">Delete</a>
-                <a-divider type="vertical" />
-                <a href="javascript:;" class="ant-dropdown-link">
-                    More actions <a-icon type="down" />
-                </a>
+                    <a href="javascript:;">Invite 一 {{record.name}}</a>
+                    <a-divider type="vertical" />
+                    <a href="javascript:;">Delete</a>
+                    <a-divider type="vertical" />
+                    <a href="javascript:;" class="ant-dropdown-link">
+                        More actions <a-icon type="down" />
+                    </a>
                 </span>
             </a-table>
       </a-card>

@@ -103,7 +103,7 @@ export default {
   methods: {
     getPageMeta () {
       // eslint-disable-next-line
-      this.pageTitle = (typeof(this.title) === 'string' || !this.title) ? this.title : this.$route.meta.title
+      this.pageTitle = (typeof(this.title) === 'string' || !this.title) ? this.title : null
 
       const content = this.$refs.content
       if (content) {
