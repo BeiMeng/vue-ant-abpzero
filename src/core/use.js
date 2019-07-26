@@ -28,3 +28,5 @@ Vue.use(VueStorage, config.storageOptions)
 Vue.use(VueClipboard)
 Vue.use(PermissionHelper)
 Vue.use(VueCropper)
+
+import '../eleComponents/index'

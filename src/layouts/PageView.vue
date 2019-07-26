@@ -124,7 +124,7 @@ export default {
 
 <style lang="less" scoped>
   .content {
-    margin: 24px 24px 0;
+    margin: 12px;
     .link {
       margin-top: 16px;
       &:not(:empty) {

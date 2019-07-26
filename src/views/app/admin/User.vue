@@ -5,101 +5,70 @@
 </style>
 
 <template>
-  <div class="admim_user">
-      <a-card :bordered="false">
-            <el-table height="calc(100vh - 245px)"
-            :data="tableData"
-            style="width: 100%">
-            <el-table-column
-                prop="date"
-                label="日期"
-                width="180">
-            </el-table-column>
-            <el-table-column
-                prop="name"
-                label="姓名"
-                width="180">
-            </el-table-column>
-            <el-table-column
-                prop="address"
-                label="地址">
-            </el-table-column>
-            </el-table>
-      </a-card>
+  <div class="admim_user">      
+      <crud :queryForm="queryForm" :mainForm="mainForm" :apiUrl="apiUrl" :permissionNames="permissionNames" dataName="user">
+          <template slot="queryItems">
+                <el-form-item label="模糊搜索">
+                    <el-input v-model="queryForm.filter" placeholder=""></el-input>
+                </el-form-item>                                
+          </template>      
+          <template slot="tableItems">
+                <el-table-column label="用户名" prop="userName" header-align="center"></el-table-column>                   
+          </template>
+          <template slot="formItems">
+                <el-form-item label="用户名" prop="userName">
+                    <el-input v-model="mainForm.userName" placeholder=""></el-input>
+                </el-form-item> 
+          </template>                    
+      </crud>
+
   </div>
 </template>
 
 <script>
+
 export default {
   name: 'admim_user',
-  data() { 
+  components:{
+      
+  },
+  data() {      
     return {
-          tableData: [{
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          }, {
-            date: '2016-05-04',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1517 弄'
-          }, {
-            date: '2016-05-01',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1519 弄'
-          }, {
-            date: '2016-05-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          },{
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          }, {
-            date: '2016-05-04',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1517 弄'
-          }, {
-            date: '2016-05-01',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1519 弄'
-          }, {
-            date: '2016-05-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          },{
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          }, {
-            date: '2016-05-04',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1517 弄'
-          }, {
-            date: '2016-05-01',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1519 弄'
-          }, {
-            date: '2016-05-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          },{
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          }, {
-            date: '2016-05-04',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1517 弄'
-          }, {
-            date: '2016-05-01',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1519 弄'
-          }, {
-            date: '2016-05-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          }]
+        queryForm:{
+            filter: ''            
+        },
+        apiUrl: {
+            queryList: '/api/services/app/User/GetUsers',
+            getById: '/api/services/app/User/GetUserForEdit',
+            del: '/api/services/app/User/DeleteUser',
+            save: '/api/services/app/User/CreateOrUpdateUser'
+        },
+        permissionNames: {
+            add: 'Pages.Administration.Users.Create',
+            edit: 'Pages.Administration.Users.Edit',
+            del: 'Pages.Administration.Users.Delete'
+        },
+        mainForm:{
+            userName: ''
+        },        
+        request: {
+            url: '/api/services/app/AuditLog/GetAuditLogs',
+            type: 'get'
+        },
+        pageSize: 10
     }
-  }
+  },
+  mounted(){
+      //this.loadTableData();
+  },
+  methods: {
+        loadTableData () {
+            let params = {
+                startDate: moment().add(-10, 'days')._d,
+                endDate: new Date()
+            }
+            this.$refs.pagin.query(params)
+        }
+  },
  }
 </script>

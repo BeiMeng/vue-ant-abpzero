@@ -2,7 +2,7 @@
 import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
 import { bxAnaalyse } from '@/core/icons'
 
-
+//默认有tab标签，keepAlive失效
 export const asyncRouterMap = [
   {
     path: '/',
@@ -47,7 +47,7 @@ export const asyncRouterMap = [
         name: 'admin',
         redirect: '/admin/user',
         component: PageView,
-        meta: { title: '系统管理', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages.Administration' ] },
+        meta: { title: '系统管理', keepAlive: false, icon: bxAnaalyse, permission: [ 'Pages.Administration' ] },
         children: [
           {
             path: '/admin/user',
