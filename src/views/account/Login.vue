@@ -167,6 +167,7 @@ export default {
                 location.href = '/' // 登陆成功后，整个web程序重新加载
               })
               .catch(error => {
+                state.loginBtn = false
                 //abp.ui.clearBusy()
                 console.error(error)
               })

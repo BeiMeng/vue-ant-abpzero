@@ -10,10 +10,15 @@ export default {
   data () {
     return {}
   },
+  computed: {
+    cachedViews() {
+      return this.$store.state.tabView.cachedViews
+    }
+  },    
   render () {
-    const { $route: { meta }, $store: { getters } } = this
+    const { $route: { meta }, $store: { getters }} = this
     const inKeep = (
-      <keep-alive>
+      <keep-alive include={this.cachedViews}>
         <router-view />
       </keep-alive>
     )

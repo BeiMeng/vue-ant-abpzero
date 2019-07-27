@@ -93,21 +93,35 @@ export default {
         }
       })
     },
+    refreshThat(e){
+      //1.先只删除当前页面的缓存
+      this.$store.dispatch('delCachedView', e).then(()=>{
+          //2.改变路由地址为首页，以便重新加载路由时页眉会刷新,但如果当前页为首页，则首页无法刷新
+          this.$router.push('/');
+          this.$nextTick(() => {             
+              this.$router.push(e.fullPath)  //3 再重新加载到此页,因为缓存已经清除了，路由也有变化，所以页面会重新加载                                         
+          })                   
+      })
+    },
     closeMenuClick ({ key, item, domEvent }) {
       const vkey = domEvent.target.getAttribute('data-vkey')
+      let pageObj=JSON.parse(vkey);
       switch (key) {
         case 'close-right':
-          this.closeRight(vkey)
+          this.closeRight(pageObj.fullPath)
           break
         case 'close-left':
-          this.closeLeft(vkey)
+          this.closeLeft(pageObj.fullPath)
           break
         case 'close-all':
-          this.closeAll(vkey)
+          this.closeAll(pageObj.fullPath)
           break
+         case 'refresh-that':
+          this.refreshThat(pageObj)
+          break         
         default:
         case 'close-that':
-          this.closeThat(vkey)
+          this.closeThat(pageObj.fullPath)
           break
       }
     },
@@ -118,6 +132,7 @@ export default {
           <a-menu-item key="close-right" data-vkey={e}>关闭右侧</a-menu-item>
           <a-menu-item key="close-left" data-vkey={e}>关闭左侧</a-menu-item>
           <a-menu-item key="close-all" data-vkey={e}>关闭全部</a-menu-item>
+          <a-menu-item key="refresh-that" data-vkey={e}>刷新</a-menu-item>
         </a-menu>
       )
     },
@@ -147,10 +162,14 @@ export default {
   render () {
     const { onEdit, $data: { pages } } = this
     const panes = pages.map(page => {
+      let newPg={
+        fullPath:page.fullPath,
+        name:page.name
+      };
       return (
         <a-tab-pane
           style={{ height: 0 }}
-          tab={this.renderTabPane(page.meta.title, page.fullPath)}
+          tab={this.renderTabPane(page.meta.title, JSON.stringify(newPg))}
           key={page.fullPath} closable={pages.length > 1}
         >
         </a-tab-pane>)

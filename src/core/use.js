@@ -11,7 +11,7 @@ import 'ant-design-vue/dist/antd.less'
 
 // import Element from 'element-ui';
 // import 'element-ui/lib/theme-chalk/index.css';
- Vue.use(ELEMENT, { size: 'medium', zIndex: 3000 });
+ Vue.use(ELEMENT, { size: 'small', zIndex: 3000 });
 
 // ext library
 import VueClipboard from 'vue-clipboard2'
