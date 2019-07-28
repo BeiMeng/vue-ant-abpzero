@@ -5,8 +5,12 @@ const tagsView = {
   mutations: {
 
     ADD_CACHED_VIEW: (state, view) => {
-      if (state.cachedViews.includes(view.name)) return
-      state.cachedViews.push(view.name)
+      if (state.cachedViews.includes(view.name)){
+        return
+      }
+      if(view.name){
+        state.cachedViews.push(view.name)
+      }      
     },
     DEL_CACHED_VIEW: (state, view) => {
       for (const i of state.cachedViews) {

@@ -16,33 +16,34 @@
 </style>
 
 <template>
-  <a-card :bordered="false" class="crud" v-if="pageState=='list'">
-    <div class="table-page-search-wrapper" v-show="showQuery">
-        <el-form :inline="true" :model="queryForm" ref="queryForm">
-            <slot name="queryItems"></slot>
-            <el-button type="primary" @click="query" icon="el-icon-search">查询</el-button>
-        </el-form>             
+  <a-card :bordered="false" class="crud">
+    <div v-show="pageState=='list'">
+        <div class="table-page-search-wrapper" v-show="showQuery">
+            <el-form :inline="true" :model="queryForm" ref="queryForm">
+                <slot name="queryItems"></slot>
+                <el-button type="primary" @click="query" icon="el-icon-search">查询</el-button>
+            </el-form>             
+        </div>
+        <a-divider />
+        <div class="table-operator" :style="`text-align: ${opPosition}`">
+            <el-button v-if="isGranted(permissionNames.add)"  icon="el-icon-plus" type="success" @click="add">新增</el-button>
+            <slot name="moreBtns"></slot>
+        </div>
+        <el-table ref="tableList" :data="tableData" border style="width: 100%" @row-click="rowClick">
+            <el-table-column type="selection" width="55" header-align="center" align="center"></el-table-column>
+            <slot name="tableItems"></slot>                  
+            <el-table-column v-if="isGranted(permissionNames.edit) || isGranted(permissionNames.del)" fixed="right" label="操作" width="120" header-align="center" align="center">
+                <template slot-scope="scope">
+                    <el-row>
+                        <i v-if="isGranted(permissionNames.edit)" class="el-icon-edit rowEdit" title="编辑" @click="rowEdit(scope.row)"></i>
+                        <i v-if="isGranted(permissionNames.del)" class="el-icon-delete rowDel" title="删除" @click="rowDel(scope.row)"></i>
+                    </el-row>
+                </template>
+            </el-table-column> 
+        </el-table>
+        <sPagination v-if="paged" ref="pagin" :request="request" :spSize.sync="pageSize" @paginationData="getPaginData" :serverPagin="sPagin"></sPagination>    
     </div>
-     <a-divider />
-    <div class="table-operator" :style="`text-align: ${opPosition}`">
-        <el-button v-if="isGranted(permissionNames.add)"  icon="el-icon-plus" type="success" @click="add">新增</el-button>
-        <slot name="moreBtns"></slot>
-    </div>
-    <el-table ref="tableList" :data="tableData" border style="width: 100%" @row-click="rowClick">
-        <el-table-column type="selection" width="55" header-align="center" align="center"></el-table-column>
-        <slot name="tableItems"></slot>                  
-        <el-table-column v-if="isGranted(permissionNames.edit) || isGranted(permissionNames.del)" fixed="right" label="操作" width="120" header-align="center" align="center">
-            <template slot-scope="scope">
-                <el-row>
-                    <i v-if="isGranted(permissionNames.edit)" class="el-icon-edit rowEdit" title="编辑" @click="rowEdit(scope.row)"></i>
-                    <i v-if="isGranted(permissionNames.del)" class="el-icon-delete rowDel" title="删除" @click="rowDel(scope.row)"></i>
-                </el-row>
-            </template>
-        </el-table-column> 
-    </el-table>
-    <sPagination v-if="paged" ref="pagin" :request="request" :spSize.sync="pageSize" @paginationData="getPaginData" :serverPagin="sPagin"></sPagination>          
-  </a-card>
-  <a-card :bordered="false" class="crud" v-else>
+    <div v-show="pageState!='list'">
         <div class="table-operator" :style="`text-align: ${opPosition}`">
             <el-button  icon="el-icon-back" @click="goListPage">返回</el-button>
             <el-button  icon="el-icon-document" type="primary" @click="save" :disabled="formDisabled">保存</el-button>
@@ -50,8 +51,10 @@
         </div>      
         <el-form :model="mainForm" ref="mainForm" :rules="mainFormRule" label-width="100px" :disabled="formDisabled">
             <slot name="formItems"></slot>                               
-        </el-form>      
+        </el-form>          
+    </div>  
   </a-card>
+
 </template>
 
 <script>
@@ -75,6 +78,10 @@ export default {
         dataName:{
             type:String,
             default:'item'            
+        },
+        warp:{
+            type:Boolean,
+            default:false
         },        
         queryForm: {
             type: Object,
@@ -322,7 +329,7 @@ export default {
                 this.saveServer(handlerData)
                 .then((result) => {
                     this.loadTableData()
-                    this.pageState = 'list'
+                    this.goListPage();
                     this.$message.success('数据保存成功！')
                 })
             })

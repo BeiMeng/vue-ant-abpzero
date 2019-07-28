@@ -318,7 +318,7 @@ dv.transform({
 const pieData = dv.rows
 
 export default {
-  name: 'Analysis',
+  name: 'dashboard_analysis',
   mixins: [mixinDevice],
   components: {
     ChartCard,

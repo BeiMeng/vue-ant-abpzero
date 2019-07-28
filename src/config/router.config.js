@@ -2,7 +2,11 @@
 import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
 import { bxAnaalyse } from '@/core/icons'
 
-//默认有tab标签，keepAlive失效
+
+//注意事項
+//1.路由的name名称必须与组件或页面的name属性相同，否则缓存无效
+//2.有tab标签情况下，keepAlive默认为true,即页面全部缓存
+//3.
 export const asyncRouterMap = [
   {
     path: '/',
@@ -16,13 +20,14 @@ export const asyncRouterMap = [
         path: '/dashboard',
         name: 'dashboard',
         redirect: '/dashboard/analysis',
-        component: RouteView,
+        component: PageView,
         hideChildrenInMenu: true, //设置子项隐藏
         meta: { title: '首页', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages.Tenant.Dashboard' ] },
         children: [
           {
             path: '/dashboard/analysis',
-            name: 'Analysis',
+            name: 'dashboard_analysis',
+            hiddenHeaderContent:true,
             component: () => import('@/views/app/dashboard/Analysis'),
             meta: { title: '首页', keepAlive: false, permission: [ 'Pages.Tenant.Dashboard' ] }
           },
@@ -47,14 +52,41 @@ export const asyncRouterMap = [
         name: 'admin',
         redirect: '/admin/user',
         component: PageView,
-        meta: { title: '系统管理', keepAlive: false, icon: bxAnaalyse, permission: [ 'Pages.Administration' ] },
+        meta: { title: '系统管理', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages.Administration' ] },
         children: [
           {
             path: '/admin/user',
-            name: 'User',
+            name: 'admim_user',
             component: () => import('@/views/app/admin/User'),
-            meta: { title: '用户管理', keepAlive: false, icon: 'user', permission: [ 'Pages.Administration.Users' ] }
-          }
+            meta: { title: '用户管理', keepAlive: true, icon: 'user', permission: [ 'Pages.Administration.Users' ] }
+          },
+          {
+            path: '/admin/role',
+            name: 'admim_role',
+            component: () => import('@/views/app/admin/Role'),
+            meta: { title: '角色管理', keepAlive: true, icon: 'team', permission: [ 'Pages.Administration.Roles' ] }
+          },
+          {
+            path: '/admin1',
+            name: 'admin1',
+            redirect: '/admin1/test',
+            component: PageView,
+            meta: { title: '系统管理1', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages.Administration' ] },
+            children: [
+              {
+                path: '/admin/test',
+                name: 'admin_test',
+                component: () => import('@/views/app/admin/Test'),
+                meta: { title: '用户管理1', keepAlive: true, icon: 'user', permission: [ 'Pages.Administration.Users' ] }
+              },
+              {
+                path: '/admin/test1',
+                name: 'admin_test1',
+                component: () => import('@/views/app/admin/Test1'),
+                meta: { title: '角色管理2', keepAlive: true, icon: 'team', permission: [ 'Pages.Administration.Roles' ] }
+              }          
+            ]
+          }                    
         ]
       },
 
