@@ -5,8 +5,8 @@ import { bxAnaalyse } from '@/core/icons'
 
 //注意事項
 //1.路由的name名称必须与组件或页面的name属性相同，否则缓存无效
-//2.有tab标签情况下，keepAlive默认为true,即页面全部缓存
-//3.
+//2.多级菜单的component 为null(为了避免多次嵌套路由，导致keepAlive 失效问题)
+//3.所有的页面路由全部定义在path为'/' 的children 下
 export const asyncRouterMap = [
   {
     path: '/',
@@ -29,7 +29,7 @@ export const asyncRouterMap = [
             name: 'dashboard_analysis',
             hiddenHeaderContent:true,
             component: () => import('@/views/app/dashboard/Analysis'),
-            meta: { title: '首页', keepAlive: false, permission: [ 'Pages.Tenant.Dashboard' ] }
+            meta: { title: '首页', keepAlive: false, permission: [ 'Pages.Tenant.Dashboard' ],noClosable:true }
           },
           // 外部链接
           {
@@ -70,21 +70,21 @@ export const asyncRouterMap = [
             path: '/admin1',
             name: 'admin1',
             redirect: '/admin1/test',
-            component: PageView,
-            meta: { title: '系统管理1', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages.Administration' ] },
+            component: null, //多级菜单component设置为null
+            meta: { title: '多级菜单', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages.Administration' ] },
             children: [
               {
                 path: '/admin/test',
                 name: 'admin_test',
                 component: () => import('@/views/app/admin/Test'),
-                meta: { title: '用户管理1', keepAlive: true, icon: 'user', permission: [ 'Pages.Administration.Users' ] }
+                meta: { title: '页面一', keepAlive: true, icon: 'user', permission: [ 'Pages.Administration.Users' ] }
               },
               {
                 path: '/admin/test1',
                 name: 'admin_test1',
                 component: () => import('@/views/app/admin/Test1'),
-                meta: { title: '角色管理2', keepAlive: true, icon: 'team', permission: [ 'Pages.Administration.Roles' ] }
-              }          
+                meta: { title: '页面二', keepAlive: true, icon: 'team', permission: [ 'Pages.Administration.Roles' ] }
+              },          
             ]
           }                    
         ]

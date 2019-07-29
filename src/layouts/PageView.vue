@@ -41,10 +41,10 @@
       <div class="page-header-index-wide">
         <slot>
           <!-- keep-alive  -->
-          <keep-alive v-if="multiTab" :include="cachedViews">
+          <keep-alive :include="cachedViews">
             <router-view ref="content" />
           </keep-alive>
-          <router-view v-else ref="content" />
+          <!-- <router-view v-else ref="content" /> -->
         </slot>
       </div>
     </div>

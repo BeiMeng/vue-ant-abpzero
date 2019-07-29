@@ -9,17 +9,13 @@ export default {
   },
   data () {
     return {}
-  },
-  computed: {
-    cachedViews() {
-      return this.$store.state.tabView.cachedViews
-    }
-  },    
+  },  
   render () {
     const { $route: { meta }, $store: { getters }} = this
     const inKeep = (
-
+      <keep-alive>
         <router-view />
+      </keep-alive>
     )
     const notKeep = (
       <router-view />

@@ -170,7 +170,7 @@ export default {
         <a-tab-pane
           style={{ height: 0 }}
           tab={this.renderTabPane(page.meta.title, JSON.stringify(newPg))}
-          key={page.fullPath} closable={pages.length > 1}
+          key={page.fullPath} closable={pages.length > 1 && !page.meta.noClosable}
         >
         </a-tab-pane>)
     })

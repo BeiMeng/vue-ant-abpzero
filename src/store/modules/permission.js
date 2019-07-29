@@ -347,23 +347,80 @@ function filterAsyncRouter (routerMap, permissionList) {
   return accessedRouters
 }
 
+//路由转换,将component为null的所有component不为null的下级转换到其平级，并删除
+function warpAsyncRouters(routerMap){
+  let route=routerMap.filter(p=>p.path=='/');
+  if(route.length==0){
+    console.error('路由定义错误,未按照约定规则定义！');
+  }
+  let menuRouters=route[0].children;
+  let parent=null;
+  childWarp(menuRouters,parent);
+
+  function childWarp(routers,parent){
+    for (let index = 0; index < routers.length; index++) {
+      const element = routers[index];
+      if(element.hasOwnProperty('component') && element.component==null && parent!=null){
+        let d=pageChildWarp(element);
+        if(d!=null){
+          parent.children=parent.children.concat(d);
+          _.pull(parent.children, element)
+        }else{
+          return
+        }   
+      }else if(element.children && element.children.length>0){
+        parent=element;
+        childWarp(element.children,parent)
+      }else{
+        continue
+      }
+    }
+
+    function pageChildWarp(element){
+      let list=[];
+      if(element.children && element.children.length>0){
+        for (let index = 0; index < element.children.length; index++) {
+          const item = element.children[index];
+          if(item.component!=null){
+            list.push(item);
+          }else{
+            let d= pageChildWarp(item);
+            if(d!=null){
+              list=list.concat(d);
+            }
+          }
+        }
+        return list;
+      }else{
+        return null;
+      }
+    }
+  }
+}
+
+
+
 const permission = {
   state: {
     routers: constantRouterMap,
     addRouters: [],
-    hasAddRouters:false
+    hasAddRouters:false,
+    menus:[]
   },
   mutations: {
     SET_ROUTERS: (state, routers) => {
-      state.addRouters = routers
-      state.routers = constantRouterMap.concat(routers)
+      state.menus = routers
+      let cloneRouters=_.cloneDeep(routers);
+      warpAsyncRouters(cloneRouters);   //有component为null的多级菜单进行真实路由转换
+      state.addRouters = cloneRouters
+      state.routers = constantRouterMap.concat(cloneRouters)
       state.hasAddRouters=true
     }
   },
   actions: {
     GenerateRoutes ({ commit }, data) {
       return new Promise(resolve => {
-        const { permissionList } = data
+        const { permissionList } = data        
         let allAsyncRouterMap=asyncRouterMap;
         if(process.env.NODE_ENV !== 'production'){    //开发环境加载demo页面
           allAsyncRouterMap[0].children.push(demoRouterMap)

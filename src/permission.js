@@ -12,6 +12,7 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['login', 'register', 'registerResult'] // no redirect whitelist
 
+
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
   to.meta && (typeof to.meta.title !== 'undefined' && setDocumentTitle(`${to.meta.title} - ${domTitle}`))
@@ -23,7 +24,9 @@ router.beforeEach((to, from, next) => {
       NProgress.done()
     } else {
         if(store.state.permission.hasAddRouters){
-          store.dispatch('addCachedView', to);
+          if(to.meta.keepAlive){
+            store.dispatch('addCachedView', to);
+          }          
           next()
         }else{
           const permissionList = abp.auth.grantedPermissions   //暂时没用上,直接取
@@ -32,7 +35,9 @@ router.beforeEach((to, from, next) => {
             // 动态添加可访问路由表
             router.addRoutes(store.getters.addRouters)
             const redirect = decodeURIComponent(from.query.redirect || to.path)
-            store.dispatch('addCachedView', to);
+            if(to.meta.keepAlive){
+              store.dispatch('addCachedView', to);
+            }
             if (to.path === redirect) {
               // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
               next({ ...to, replace: true })
