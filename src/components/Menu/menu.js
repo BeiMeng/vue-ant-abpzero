@@ -3,29 +3,42 @@ function Find(name,json) {
         var eachData = json;
         var handle = [{
           name: json.name,
-          level: ',' + json.name + ','
+          levelObj: {
+              idLevel: ',' + json.name + ',',
+              pathLevel: ',' + json.path + ','
+          }
       }];
-      var findChild = function (parentId, children) {
+      var findChild = function (levelObj, children) {
           for (let index = 0; index < children.length; index++) {
               const element = children[index];
               handle.push({
                   name: element.name,
-                  level: parentId
+                  levelObj: levelObj
               });
               if (element["children"] != null && element.children.length > 0) {
-                  var tmpLevel = parentId + element.name + ',';
-                  findChild(tmpLevel, element.children);
+                  var tmpLevel = levelObj.idLevel + element.name + ',';
+                  var tmpPath = levelObj.pathLevel + element.path + ',';
+                  findChild({
+                      idLevel: tmpLevel,
+                      pathLevel: tmpPath
+                  }, element.children);
               }
           }
       }
       if (eachData["children"] != null && eachData.children.length > 0) {
-          findChild(',' + eachData.name + ',', eachData.children);
+          findChild({
+              idLevel: ',' + eachData.name + ',',
+              pathLevel: ',' + eachData.path + ','
+          }, eachData.children);
       }
 
       for (let index = 0; index < handle.length; index++) {
           const element = handle[index];
           if (element.name == name) {
-              return element.level.substr(1, element.level.lastIndexOf(",") - 1).split(",");
+              return {
+                  names: element.levelObj.idLevel.substr(1, element.levelObj.idLevel.lastIndexOf(",") - 1).split(","),
+                  paths: element.levelObj.pathLevel.substr(1, element.levelObj.pathLevel.lastIndexOf(",") - 1).split(",")
+              };
           }
       }
       return null;
@@ -117,11 +130,11 @@ export default {
       } else {
         this.selectedKeys = [routes.pop().path]
       }      
-      const openKeys = []
+      let openKeys = []
       if (this.mode === 'inline') {
-        routes.forEach(item => {
-          openKeys.push(item.path)
-        })
+        // routes.forEach(item => {
+        //   openKeys.push(item.path)
+        // })
         let menus=this.$store.state.permission.menus;
         let route=menus.filter(p=>p.path=='/');
         if(route.length==0){
@@ -129,7 +142,7 @@ export default {
         }
         let menuRouters=route[0];
         let d=Find(this.$route.name,menuRouters);
-        debugger
+        openKeys=d.paths;
       }
 
       this.collapsed ? (this.cachedOpenKeys = openKeys) : (this.openKeys = openKeys)

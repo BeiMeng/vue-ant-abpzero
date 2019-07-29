@@ -422,9 +422,9 @@ const permission = {
       return new Promise(resolve => {
         const { permissionList } = data        
         let allAsyncRouterMap=asyncRouterMap;
-        if(process.env.NODE_ENV !== 'production'){    //开发环境加载demo页面
-          allAsyncRouterMap[0].children.push(demoRouterMap)
-        }        
+        // if(process.env.NODE_ENV !== 'production'){    //开发环境加载demo页面
+        //   allAsyncRouterMap[0].children.push(demoRouterMap)
+        // }        
         const accessedRouters = filterAsyncRouter(allAsyncRouterMap, permissionList)
         commit('SET_ROUTERS', accessedRouters)
         resolve()
