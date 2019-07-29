@@ -11,14 +11,14 @@ import { bxAnaalyse } from '@/core/icons'
   path: '/demo',
   name: 'demo',
   redirect: '/form/base-form',
-  component: RouteView,
+  component: PageView,
   meta: { title: '示例页面', keepAlive: true, icon: bxAnaalyse},
   children: [
       // forms
       {
         path: '/form',
         redirect: '/form/base-form',
-        component: PageView,
+        component: null,
         meta: { title: '表单页', icon: 'form' },
         children: [
           {
@@ -46,7 +46,7 @@ import { bxAnaalyse } from '@/core/icons'
       {
         path: '/list',
         name: 'list',
-        component: PageView,
+        component: null,
         redirect: '/list/table-list',
         meta: { title: '列表页', icon: 'table' },
         children: [
@@ -126,7 +126,7 @@ import { bxAnaalyse } from '@/core/icons'
       {
         path: '/result',
         name: 'result',
-        component: PageView,
+        component: null,
         redirect: '/result/success',
         meta: { title: '结果页', icon: 'check-circle-o'},
         children: [
@@ -177,7 +177,7 @@ import { bxAnaalyse } from '@/core/icons'
       // account
       {
         path: '/account',
-        component: RouteView,
+        component: null,
         redirect: '/account/center',
         name: 'account',
         meta: { title: '个人页', icon: 'user', keepAlive: true},
@@ -235,7 +235,7 @@ import { bxAnaalyse } from '@/core/icons'
       {
         path: '/other',
         name: 'otherPage',
-        component: PageView,
+        component: null,
         meta: { title: '其他组件', icon: 'slack' },
         redirect: '/other/icon-selector',
         children: [

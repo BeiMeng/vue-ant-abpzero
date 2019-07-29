@@ -1,3 +1,39 @@
+
+function Find(name,json) {
+        var eachData = json;
+        var handle = [{
+          name: json.name,
+          level: ',' + json.name + ','
+      }];
+      var findChild = function (parentId, children) {
+          for (let index = 0; index < children.length; index++) {
+              const element = children[index];
+              handle.push({
+                  name: element.name,
+                  level: parentId
+              });
+              if (element["children"] != null && element.children.length > 0) {
+                  var tmpLevel = parentId + element.name + ',';
+                  findChild(tmpLevel, element.children);
+              }
+          }
+      }
+      if (eachData["children"] != null && eachData.children.length > 0) {
+          findChild(',' + eachData.name + ',', eachData.children);
+      }
+
+      for (let index = 0; index < handle.length; index++) {
+          const element = handle[index];
+          if (element.name == name) {
+              return element.level.substr(1, element.level.lastIndexOf(",") - 1).split(",");
+          }
+      }
+      return null;
+    }
+
+
+
+
 import Menu from 'ant-design-vue/es/menu'
 import Icon from 'ant-design-vue/es/icon'
 
@@ -80,12 +116,20 @@ export default {
         this.selectedKeys = [routes[routes.length - 1].path]
       } else {
         this.selectedKeys = [routes.pop().path]
-      }
+      }      
       const openKeys = []
       if (this.mode === 'inline') {
         routes.forEach(item => {
           openKeys.push(item.path)
         })
+        let menus=this.$store.state.permission.menus;
+        let route=menus.filter(p=>p.path=='/');
+        if(route.length==0){
+          console.error('路由定义错误,未按照约定规则定义！');
+        }
+        let menuRouters=route[0];
+        let d=Find(this.$route.name,menuRouters);
+        debugger
       }
 
       this.collapsed ? (this.cachedOpenKeys = openKeys) : (this.openKeys = openKeys)
