@@ -15,5 +15,5 @@ export const setDocumentTitle = function (title) {
     document.body.appendChild(i)
   }
 }
-
-export const domTitle = 'BeiDream'
+import config from '@/config/defaultSettings'
+export const domTitle = config.appTitle

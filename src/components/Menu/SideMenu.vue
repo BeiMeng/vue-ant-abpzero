@@ -5,7 +5,7 @@
     :collapsible="collapsible"
     v-model="collapsed"
     :trigger="null">
-    <logo />
+    <logo :title="appTitle"/>
     <s-menu
       :collapsed="collapsed"
       :menu="menus"
@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import config from '@/config/defaultSettings'
 import Logo from '@/components/tools/Logo'
 import SMenu from './index'
 import { mixin, mixinDevice } from '@/utils/mixin'
@@ -50,6 +51,11 @@ export default {
     menus: {
       type: Array,
       required: true
+    }
+  },
+  data() {
+    return {
+      appTitle: config.appTitle
     }
   },
   methods: {

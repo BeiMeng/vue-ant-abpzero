@@ -16,7 +16,7 @@
 </style>
 
 <template>
-  <a-card :bordered="false" class="crud">
+  <a-card :bordered="false" class="crud" v-loading="loading" element-loading-text="拼命加载中">
     <div v-show="pageState=='list'">
         <div class="table-page-search-wrapper" v-show="showQuery">
             <el-form :inline="true" :model="queryForm" ref="queryForm">
@@ -24,7 +24,7 @@
                 <el-button type="primary" @click="query" icon="el-icon-search">查询</el-button>
             </el-form>             
         </div>
-        <a-divider />
+        <a-divider v-show="showQuery"/>
         <div class="table-operator" :style="`text-align: ${opPosition}`">
             <el-button v-if="isGranted(permissionNames.add)"  icon="el-icon-plus" type="success" @click="add">新增</el-button>
             <slot name="moreBtns"></slot>
@@ -41,12 +41,12 @@
                 </template>
             </el-table-column> 
         </el-table>
-        <sPagination v-if="paged" ref="pagin" :request="request" :spSize.sync="pageSize" @paginationData="getPaginData" :serverPagin="sPagin"></sPagination>    
+        <sPagination v-if="paged" ref="pagin" :request="request" :spSize.sync="spSize" @paginationData="getPaginData" :serverPagin="sPagin" @beforeGetData="beforeGetData"></sPagination>    
     </div>
     <div v-show="pageState!='list'">
         <div class="table-operator" :style="`text-align: ${opPosition}`">
             <el-button  icon="el-icon-back" @click="goListPage">返回</el-button>
-            <el-button  icon="el-icon-document" type="primary" @click="save" :disabled="formDisabled">保存</el-button>
+            <el-button  icon="el-icon-document" type="primary" @click="save" :disabled="formDisabled" :loading="loading">{{saveingTxt}}</el-button>
             <slot name="moreFormBtns"></slot>
         </div>      
         <el-form :model="mainForm" ref="mainForm" :rules="mainFormRule" label-width="100px" :disabled="formDisabled">
@@ -166,7 +166,10 @@ export default {
     data() { 
         return {
             pageState:'list',
-            tableData: []
+            tableData: [],
+            loading:false,
+            saveLoading:false,
+            spSize:20
         }
     },
     computed: {
@@ -185,9 +188,13 @@ export default {
         },
         formDisabled: function () {
             return this.pageState=="browse" || this.pageState=="list";
-        }       
+        },
+        saveingTxt: function () {
+            return this.saveLoading?'保存中...':'保存';
+        }                 
     },
     mounted(){
+        this.spSize=this.pageSize;        
         defaultForm = _.cloneDeep(this.mainForm);
         this.query();
     },
@@ -196,6 +203,8 @@ export default {
             this.$refs.tableList.toggleRowSelection(row, true);
         }, 
         query() {
+            console.log(this.pageSize);
+            this.loading=true;
             this.loadTableData();
         },               
         loadTableData(){
@@ -223,7 +232,8 @@ export default {
                         this.tableData=warpData;
                     }else{
                         this.tableData=result.items;
-                    }                                                                           
+                    }
+                    this.loading=false;                                                                           
                 }) 
             }
         },
@@ -232,6 +242,9 @@ export default {
                 params: queryParams
             })            
         },        
+        beforeGetData(){
+            this.loading=true;
+        },
         //设置分页数据
         getPaginData(list){
             //warp
@@ -240,7 +253,8 @@ export default {
                 this.tableData=warpData;
             }else{
                 this.tableData=list;
-            }                                   
+            }
+            this.loading=false;                                   
         },                
         add () {
             if(!this.addBefore()){
@@ -258,9 +272,10 @@ export default {
         },
         setFormInfoById (dataId) {
             this.selectDataId = dataId
-
+            this.loading=true;
             this.getByServer(dataId)
                 .then(result => {
+                this.loading=false;
                 let handlerResult = result
                 if (this.pageState == 'add') {
                     let warpData=this.handlerAddData(handlerResult);
@@ -274,7 +289,7 @@ export default {
                     }                  
                 }
                 this.setFormInfo(handlerResult[this.dataName])
-                })
+            })
         },
         setFormInfo (result) {
             let formData
@@ -325,11 +340,12 @@ export default {
                 if(warpData){
                     handlerData=warpData;
                 }               
-                this.loading = true
+                this.saveLoading = true
                 this.saveServer(handlerData)
                 .then((result) => {
                     this.loadTableData()
                     this.goListPage();
+                    this.saveLoading = false;
                     this.$message.success('数据保存成功！')
                 })
             })

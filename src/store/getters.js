@@ -5,9 +5,9 @@ const getters = {
   token: state => state.user.token,
   avatar: state => {
     if(state.appSession.user.profilePictureId){
-      return '/avatar2.jpg'
+      return '/user.png'
     }else{
-      return '/avatar2.jpg'
+      return '/user.png'
     }
   },
   nickname: state => state.appSession.user.name,

@@ -5,11 +5,11 @@
         <div class="header">
           <a href="/">
             <img src="~@/assets/logo.svg" class="logo" alt="logo">
-            <span class="title">办公自动化</span>
+            <span class="title">{{appTitle}}</span>
           </a>
         </div>
         <div class="desc">
-          大熊精密 办公自动化系统
+          {{appDesc}}
         </div>
       </div>
 
@@ -27,13 +27,16 @@
 <script>
 import RouteView from './RouteView'
 import { mixinDevice } from '@/utils/mixin'
-
+import config from '@/config/defaultSettings'
 export default {
   name: 'UserLayout',
   components: { RouteView },
   mixins: [mixinDevice],
   data () {
-    return {}
+    return {
+      appTitle:config.appTitle,
+      appDesc:config.appDesc
+    }
   },
   mounted () {
     document.body.classList.add('userLayout')

@@ -79,6 +79,7 @@ export default {
       })
     },
     async getTableData () {
+      this.$emit('beforeGetData')
       if (this.serverPagin) {
         await this.loadServerPagin()
         return

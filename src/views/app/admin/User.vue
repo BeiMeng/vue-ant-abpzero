@@ -6,7 +6,7 @@
 
 <template>
   <div class="admim_user">      
-      <crud warp :queryForm="queryForm" :mainForm="mainForm" :apiUrl="apiUrl" :permissionNames="permissionNames" dataName="user"
+      <crud warp dataName="user" :queryForm="queryForm" :mainForm="mainForm" :apiUrl="apiUrl" :permissionNames="permissionNames" :pageSize="pageSize"
         :handlerAddData="handlerAddData" :handlerEditData="handlerEditData" :handlerSaveData="handlerSaveData" :handlerGoList="handlerGoList">
           <template slot="queryItems">
                 <el-form-item label="模糊搜索">
@@ -50,8 +50,8 @@
                 </el-table-column>             
           </template>
           <template slot="formItems">
-            <a-tabs v-model="activeTab">
-                <a-tab-pane tab="用户信息" key="user">
+                <el-tabs  v-model="activeTab">
+                  <el-tab-pane label="用户信息" name="user">
                     <div style="width:25vw;margin-left:30px">
                         <el-form-item label="用户名" prop="userName">
                             <el-input v-model="mainForm.userName" placeholder=""></el-input>
@@ -78,13 +78,13 @@
                             <el-switch v-model="mainForm.isActive"  active-text='否' inactive-text='是' :active-value='false' :inactive-value='true'></el-switch>
                         </el-form-item>                                                                                                 
                     </div> 
-                </a-tab-pane>
-                <a-tab-pane tab="角色" key="role" forceRender>
+                  </el-tab-pane>
+                  <el-tab-pane label="角色" name="role">
                     <el-checkbox-group v-model="selectedRoleList">
                         <el-checkbox :label="item.name" v-for="item in roleList" :key="item.key">{{item.displayName}}</el-checkbox>
                     </el-checkbox-group>
-                </a-tab-pane>
-            </a-tabs>             
+                  </el-tab-pane>
+                </el-tabs>          
           </template>                    
       </crud>
 
@@ -92,7 +92,7 @@
 </template>
 
 <script>
-
+//abpzero User表字段Surname设置为可为空
 export default {
   name: 'admim_user',
   components:{

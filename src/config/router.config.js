@@ -25,14 +25,14 @@ export const asyncRouterMap = [
         redirect: '/dashboard/analysis',
         component: PageView,
         hideChildrenInMenu: true, //设置子项隐藏
-        meta: { title: '首页', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages.Tenant.Dashboard' ] },
+        meta: { title: '首页', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages' ] },
         children: [
           {
             path: '/dashboard/analysis',
             name: 'dashboard_analysis',
             hiddenHeaderContent:true,
             component: () => import('@/views/app/dashboard/Analysis'),
-            meta: { title: '首页', keepAlive: false, permission: [ 'Pages.Tenant.Dashboard' ],noClosable:true, hiddenHeaderContent: true }
+            meta: { title: '首页', keepAlive: false, permission: [ 'Pages' ],noClosable:true, hiddenHeaderContent: true }
           },
           // 外部链接
           {

@@ -14,6 +14,8 @@
  */
 
 export default {
+  appTitle:'BeiDream',
+  appDesc:'BeiDream后台管理系统',
   primaryColor: '#52C41A', // primary color of ant design
   navTheme: 'dark', // theme for nav menu
   layout: 'sidemenu', // nav menu position: sidemenu or topmenu
