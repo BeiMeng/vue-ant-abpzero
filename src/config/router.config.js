@@ -3,6 +3,9 @@ import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/lay
 import { bxAnaalyse } from '@/core/icons'
 
 
+
+
+
 //注意事項
 //1.路由的name名称必须与组件或页面的name属性相同，否则缓存无效
 //2.多级菜单的component 为null(为了避免多次嵌套路由，导致keepAlive 失效问题)
@@ -29,7 +32,7 @@ export const asyncRouterMap = [
             name: 'dashboard_analysis',
             hiddenHeaderContent:true,
             component: () => import('@/views/app/dashboard/Analysis'),
-            meta: { title: '首页', keepAlive: false, permission: [ 'Pages.Tenant.Dashboard' ],noClosable:true }
+            meta: { title: '首页', keepAlive: false, permission: [ 'Pages.Tenant.Dashboard' ],noClosable:true, hiddenHeaderContent: true }
           },
           // 外部链接
           {
@@ -52,7 +55,7 @@ export const asyncRouterMap = [
         name: 'admin',
         redirect: '/admin/user',
         component: PageView,
-        meta: { title: '系统管理', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages.Administration' ] },
+        meta: { title: '系统管理', keepAlive: true, icon: 'setting', permission: [ 'Pages.Administration' ] },
         children: [
           {
             path: '/admin/user',
