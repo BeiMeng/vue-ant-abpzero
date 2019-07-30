@@ -59,30 +59,41 @@ export default {
       },      
     }
   },
-    mounted(){
-        this.init();
-        this.permissionTreeData=[];
-        httpClient.get("/api/services/app/Common/GetAllPermissionTree")   //添加获取全部权限的接口
-        .then(result => { 
-            this.permissionTreeData.push(result)                 
-        })          
+  props: {
+    treeData: {
+      type: Array,
+      default:[] 
     },
-    methods: {
-        init(){
-            this.activeTab="funPerm";   
-            this.$refs.permissionTree.setCheckedKeys([]);      
-        },
-        setGrantedPermissions(grantedPermissions){
-            this.$refs.permissionTree.setCheckedKeys(grantedPermissions);
-            this.defaultExpandedKeys=grantedPermissions;            
-        },
-        getPermissions(){
-            let checkedNodes=this.$refs.permissionTree.getCheckedNodes(false,true);
-            let grantedPermissionNames=checkedNodes.map((p)=>{
-                return p.name
-            });
-            return grantedPermissionNames;            
-        }      
-    },  
+  },
+  watch: {
+    treeData(newValue, oldValue) {
+      this.permissionTreeData=newValue;
+    }
+  },
+  mounted(){
+      this.init();
+      this.permissionTreeData=[];
+      // httpClient.get("/api/services/app/Permission/GetAllPermissionTree")   //添加获取全部权限的接口
+      // .then(result => { 
+      //     this.permissionTreeData.push(result)                 
+      // })          
+  },
+  methods: {
+      init(){
+          this.activeTab="funPerm";   
+          this.$refs.permissionTree.setCheckedKeys([]);      
+      },
+      setGrantedPermissions(grantedPermissions){
+          this.$refs.permissionTree.setCheckedKeys(grantedPermissions);
+          this.defaultExpandedKeys=grantedPermissions;            
+      },
+      getPermissions(){
+          let checkedNodes=this.$refs.permissionTree.getCheckedNodes(false,true);
+          let grantedPermissionNames=checkedNodes.map((p)=>{
+              return p.name
+          });
+          return grantedPermissionNames;            
+      }      
+  },  
  }
 </script>

@@ -6,7 +6,7 @@
 
 <template>
   <div class="admim_user">      
-      <crud warp dataName="user" :queryForm="queryForm" :mainForm="mainForm" :apiUrl="apiUrl" :permissionNames="permissionNames" :pageSize="pageSize"
+      <crud warp dataName="user" :queryForm="queryForm" :mainForm="mainForm" :mainFormRule="mainFormRule" :apiUrl="apiUrl" :permissionNames="permissionNames" :pageSize="pageSize"
         :handlerAddData="handlerAddData" :handlerEditData="handlerEditData" :handlerSaveData="handlerSaveData" :handlerGoList="handlerGoList">
           <template slot="queryItems">
                 <el-form-item label="模糊搜索">
@@ -128,7 +128,13 @@ export default {
             againPassword:'',
             isActive:'',
             setRandomPassword:false
-        },        
+        },  
+        mainFormRule:{
+            userName: [
+                { required: true, message: '用户名为必须项', trigger: 'blur' },
+                { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
+            ],
+        },              
         request: {
             url: '/api/services/app/AuditLog/GetAuditLogs',
             type: 'get'

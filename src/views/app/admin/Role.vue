@@ -46,7 +46,7 @@
                     </div> 
                   </el-tab-pane>
                   <el-tab-pane label="权限" name="permission">
-                    <permission-setting ref="permissionSetting"></permission-setting>
+                    <permission-setting ref="permissionSetting" :treeData="permissionTreeData"></permission-setting>
                   </el-tab-pane>
                 </el-tabs>                 
           </template>
@@ -63,6 +63,7 @@ export default {
   },  
   data() {
     return {
+      permissionTreeData:[],
       activeTab:'role',
       mainForm:{
           displayName:'',
@@ -90,9 +91,11 @@ export default {
   methods: {
         handlerAddData(result){
             this.$refs.permissionSetting.init();
+            this.permissionTreeData = this.arrayToTreeConverter(result.permissions, 'parentName', 'name', null, 'children', false)
         },
         handlerEditData(result) {
             this.$refs.permissionSetting.init();
+            this.permissionTreeData = this.arrayToTreeConverter(result.permissions, 'parentName', 'name', null, 'children', false)
             this.$refs.permissionSetting.setGrantedPermissions(result.grantedPermissionNames);  //abpzero的后端修改一下，只保留叶节点选中的数据即可
         },        
         handlerGoList(){
