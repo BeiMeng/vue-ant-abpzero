@@ -57,7 +57,7 @@
 <script>
 import permissionSetting from './components/permissionSetting'
 export default {
-  name: 'admin_Role',
+  name: 'admim_role',
   components: {
       permissionSetting
   },  

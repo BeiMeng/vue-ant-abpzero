@@ -134,19 +134,15 @@ export default {
                 { required: true, message: '用户名为必须项', trigger: 'blur' },
                 { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
             ],
-        },              
-        request: {
-            url: '/api/services/app/AuditLog/GetAuditLogs',
-            type: 'get'
         },
         pageSize: 10
     }
   },
   mounted(){
-        httpClient.get("/api/services/app/Role/GetRoles")
-        .then(result => { 
-            this.roleList=result.items;                 
-        })  
+    httpClient.get("/api/services/app/User/GetRoles")
+    .then(result => { 
+        this.roleList=result.items;                 
+    })  
   },
   methods: {
     handlerAddData(result){

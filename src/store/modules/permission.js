@@ -41,6 +41,34 @@ let demoRouterMap={
         ]
       },
 
+      // Exception
+      {
+        path: '/exception',
+        name: 'exception',
+        component: null,
+        redirect: '/exception/403',
+        meta: { title: '异常页', icon: 'warning'},
+        children: [
+          {
+            path: '/exception/403',
+            name: 'Exception403',
+            component: () => import(/* webpackChunkName: "fail" */ '@/views/shared/exception/403'),
+            meta: { title: '403' }
+          },
+          {
+            path: '/exception/404',
+            name: 'Exception404',
+            component: () => import(/* webpackChunkName: "fail" */ '@/views/shared/exception/404'),
+            meta: { title: '404'}
+          },
+          {
+            path: '/exception/500',
+            name: 'Exception500',
+            component: () => import(/* webpackChunkName: "fail" */ '@/views/shared/exception/500'),
+            meta: { title: '500' }
+          }
+        ]
+      },
       // list
       {
         path: '/list',
@@ -97,7 +125,6 @@ let demoRouterMap={
           }
         ]
       },
-
       // profile
       {
         path: '/profile',
@@ -119,178 +146,146 @@ let demoRouterMap={
             meta: { title: '高级详情页'}
           }
         ]
-      },
-
-      // Exception
+      },       
+      // result
       {
-        path: '/exception',
-        name: 'exception',
-        component: RouteView,
-        redirect: '/exception/403',
-        meta: { title: '异常页', icon: 'warning'},
+        path: '/result',
+        name: 'result',
+        component: null,
+        redirect: '/result/success',
+        meta: { title: '结果页', icon: 'check-circle-o'},
         children: [
           {
-            path: '/exception/403',
-            name: 'Exception403',
-            component: () => import(/* webpackChunkName: "fail" */ '@/views/shared/exception/403'),
-            meta: { title: '403' }
+            path: '/result/success',
+            name: 'ResultSuccess',
+            component: () => import(/* webpackChunkName: "result" */ '@/views/demo/result/Success'),
+            meta: { title: '成功', keepAlive: false, hiddenHeaderContent: true}
           },
           {
-            path: '/exception/404',
-            name: 'Exception404',
-            component: () => import(/* webpackChunkName: "fail" */ '@/views/shared/exception/404'),
-            meta: { title: '404'}
-          },
-          {
-            path: '/exception/500',
-            name: 'Exception500',
-            component: () => import(/* webpackChunkName: "fail" */ '@/views/shared/exception/500'),
-            meta: { title: '500' }
+            path: '/result/fail',
+            name: 'ResultFail',
+            component: () => import(/* webpackChunkName: "result" */ '@/views/demo/result/Error'),
+            meta: { title: '失败', keepAlive: false, hiddenHeaderContent: true}
           }
         ]
       },
-
-      //下面的定义会提示路由重复.待查
-      // // result
-      // {
-      //   path: '/result',
-      //   name: 'result',
-      //   component: null,
-      //   redirect: '/result/success',
-      //   meta: { title: '结果页', icon: 'check-circle-o'},
-      //   children: [
-      //     {
-      //       path: '/result/success',
-      //       name: 'ResultSuccess',
-      //       component: () => import(/* webpackChunkName: "result" */ '@/views/demo/result/Success'),
-      //       meta: { title: '成功', keepAlive: false, hiddenHeaderContent: true}
-      //     },
-      //     {
-      //       path: '/result/fail',
-      //       name: 'ResultFail',
-      //       component: () => import(/* webpackChunkName: "result" */ '@/views/demo/result/Error'),
-      //       meta: { title: '失败', keepAlive: false, hiddenHeaderContent: true}
-      //     }
-      //   ]
-      // },
-
       // // account
-      // {
-      //   path: '/account',
-      //   component: null,
-      //   redirect: '/account/center',
-      //   name: 'account',
-      //   meta: { title: '个人页', icon: 'user', keepAlive: true},
-      //   children: [
-      //     {
-      //       path: '/account/center',
-      //       name: 'center',
-      //       component: () => import('@/views/demo/account/center/Index'),
-      //       meta: { title: '个人中心', keepAlive: true}
-      //     },
-      //     {
-      //       path: '/account/settings',
-      //       name: 'settings',
-      //       component: () => import('@/views/demo/account/settings/Index'),
-      //       meta: { title: '个人设置', hideHeader: true },
-      //       redirect: '/account/settings/base',
-      //       hideChildrenInMenu: true,
-      //       children: [
-      //         {
-      //           path: '/account/settings/base',
-      //           name: 'BaseSettings',
-      //           component: () => import('@/views/demo/account/settings/BaseSetting'),
-      //           meta: { title: '基本设置', hidden: true }
-      //         },
-      //         {
-      //           path: '/account/settings/security',
-      //           name: 'SecuritySettings',
-      //           component: () => import('@/views/demo/account/settings/Security'),
-      //           meta: { title: '安全设置', hidden: true, keepAlive: true }
-      //         },
-      //         {
-      //           path: '/account/settings/custom',
-      //           name: 'CustomSettings',
-      //           component: () => import('@/views/demo/account/settings/Custom'),
-      //           meta: { title: '个性化设置', hidden: true, keepAlive: true }
-      //         },
-      //         {
-      //           path: '/account/settings/binding',
-      //           name: 'BindingSettings',
-      //           component: () => import('@/views/demo/account/settings/Binding'),
-      //           meta: { title: '账户绑定', hidden: true, keepAlive: true }
-      //         },
-      //         {
-      //           path: '/account/settings/notification',
-      //           name: 'NotificationSettings',
-      //           component: () => import('@/views/demo/account/settings/Notification'),
-      //           meta: { title: '新消息通知', hidden: true, keepAlive: true }
-      //         }
-      //       ]
-      //     }
-      //   ]
-      // },
+      {
+        path: '/account',
+        component: null,
+        redirect: '/account/center',
+        name: 'account',
+        meta: { title: '个人页', icon: 'user', keepAlive: true},
+        children: [
+          {
+            path: '/account/center',
+            name: 'center',
+            component: () => import('@/views/demo/account/center/Index'),
+            meta: { title: '个人中心', keepAlive: true}
+          },
+          {
+            path: '/account/settings',
+            name: 'settings',
+            component: () => import('@/views/demo/account/settings/Index'),
+            meta: { title: '个人设置', hideHeader: true },
+            redirect: '/account/settings/base',
+            hideChildrenInMenu: true,
+            children: [
+              {
+                path: '/account/settings/base',
+                name: 'BaseSettings',
+                component: () => import('@/views/demo/account/settings/BaseSetting'),
+                meta: { title: '基本设置', hidden: true }
+              },
+              {
+                path: '/account/settings/security',
+                name: 'SecuritySettings',
+                component: () => import('@/views/demo/account/settings/Security'),
+                meta: { title: '安全设置', hidden: true, keepAlive: true }
+              },
+              {
+                path: '/account/settings/custom',
+                name: 'CustomSettings',
+                component: () => import('@/views/demo/account/settings/Custom'),
+                meta: { title: '个性化设置', hidden: true, keepAlive: true }
+              },
+              {
+                path: '/account/settings/binding',
+                name: 'BindingSettings',
+                component: () => import('@/views/demo/account/settings/Binding'),
+                meta: { title: '账户绑定', hidden: true, keepAlive: true }
+              },
+              {
+                path: '/account/settings/notification',
+                name: 'NotificationSettings',
+                component: () => import('@/views/demo/account/settings/Notification'),
+                meta: { title: '新消息通知', hidden: true, keepAlive: true }
+              }
+            ]
+          }
+        ]
+      },           
+      // other
+      {
+        path: '/other',
+        name: 'otherPage',
+        component: null,
+        meta: { title: '其他组件', icon: 'slack' },
+        redirect: '/other/icon-selector',
+        children: [
+          {
+            path: '/other/icon-selector',
+            name: 'TestIconSelect',
+            component: () => import('@/views/demo/other/IconSelectorView'),
+            meta: { title: 'IconSelector', icon: 'tool', keepAlive: true }
+          },
+          {
+            path: '/other/list',
+            component: RouteView,
+            meta: { title: '业务布局', icon: 'layout' },
+            redirect: '/other/list/tree-list',
+            children: [
+              {
+                path: '/other/list/tree-list',
+                name: 'TreeList',
+                component: () => import('@/views/demo/other/TreeList'),
+                meta: { title: '树目录表格', keepAlive: true }
+              },
+              {
+                path: '/other/list/edit-table',
+                name: 'EditList',
+                component: () => import('@/views/demo/other/TableInnerEditList'),
+                meta: { title: '内联编辑表格', keepAlive: true }
+              },
+              {
+                path: '/other/list/user-list',
+                name: 'UserList',
+                component: () => import('@/views/demo/other/UserList'),
+                meta: { title: '用户列表', keepAlive: true }
+              },
+              {
+                path: '/other/list/role-list',
+                name: 'RoleList',
+                component: () => import('@/views/demo/other/RoleList'),
+                meta: { title: '角色列表', keepAlive: true }
+              },
+              {
+                path: '/other/list/system-role',
+                name: 'SystemRole',
+                component: () => import('@/views/demo/role/RoleList'),
+                meta: { title: '角色列表2', keepAlive: true }
+              },
+              {
+                path: '/other/list/permission-list',
+                name: 'PermissionList',
+                component: () => import('@/views/demo/other/PermissionList'),
+                meta: { title: '权限列表', keepAlive: true }
+              }
+            ]
+          }
+        ]
+      }
 
-      // // other
-      // {
-      //   path: '/other',
-      //   name: 'otherPage',
-      //   component: null,
-      //   meta: { title: '其他组件', icon: 'slack' },
-      //   redirect: '/other/icon-selector',
-      //   children: [
-      //     {
-      //       path: '/other/icon-selector',
-      //       name: 'TestIconSelect',
-      //       component: () => import('@/views/demo/other/IconSelectorView'),
-      //       meta: { title: 'IconSelector', icon: 'tool', keepAlive: true }
-      //     },
-      //     {
-      //       path: '/other/list',
-      //       component: RouteView,
-      //       meta: { title: '业务布局', icon: 'layout' },
-      //       redirect: '/other/list/tree-list',
-      //       children: [
-      //         {
-      //           path: '/other/list/tree-list',
-      //           name: 'TreeList',
-      //           component: () => import('@/views/demo/other/TreeList'),
-      //           meta: { title: '树目录表格', keepAlive: true }
-      //         },
-      //         {
-      //           path: '/other/list/edit-table',
-      //           name: 'EditList',
-      //           component: () => import('@/views/demo/other/TableInnerEditList'),
-      //           meta: { title: '内联编辑表格', keepAlive: true }
-      //         },
-      //         {
-      //           path: '/other/list/user-list',
-      //           name: 'UserList',
-      //           component: () => import('@/views/demo/other/UserList'),
-      //           meta: { title: '用户列表', keepAlive: true }
-      //         },
-      //         {
-      //           path: '/other/list/role-list',
-      //           name: 'RoleList',
-      //           component: () => import('@/views/demo/other/RoleList'),
-      //           meta: { title: '角色列表', keepAlive: true }
-      //         },
-      //         {
-      //           path: '/other/list/system-role',
-      //           name: 'SystemRole',
-      //           component: () => import('@/views/demo/role/RoleList'),
-      //           meta: { title: '角色列表2', keepAlive: true }
-      //         },
-      //         {
-      //           path: '/other/list/permission-list',
-      //           name: 'PermissionList',
-      //           component: () => import('@/views/demo/other/PermissionList'),
-      //           meta: { title: '权限列表', keepAlive: true }
-      //         }
-      //       ]
-      //     }
-      //   ]
-      // }
   ]
 }
 
