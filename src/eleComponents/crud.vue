@@ -30,7 +30,7 @@
             <slot name="moreBtns"></slot>
         </div>
         <el-table ref="tableList" :data="tableData" border style="width: 100%" @row-click="rowClick">
-            <el-table-column type="selection" width="55" header-align="center" align="center"></el-table-column>
+            <!-- <el-table-column type="selection" width="55" header-align="center" align="center"></el-table-column> -->
             <slot name="tableItems"></slot>                  
             <el-table-column v-if="isGranted(permissionNames.edit) || isGranted(permissionNames.del)" fixed="right" label="操作" width="120" header-align="center" align="center">
                 <template slot-scope="scope">
@@ -46,7 +46,7 @@
     <div v-show="pageState!='list'">
         <div class="table-operator" :style="`text-align: ${opPosition}`">
             <el-button  icon="el-icon-back" @click="goListPage">返回</el-button>
-            <el-button  icon="el-icon-document" type="primary" @click="save" :disabled="formDisabled" :loading="loading">{{saveingTxt}}</el-button>
+            <el-button  icon="el-icon-document" type="primary" @click="save" :disabled="formDisabled" :loading="saveLoading">{{saveingTxt}}</el-button>
             <slot name="moreFormBtns"></slot>
         </div>      
         <el-form :model="mainForm" ref="mainForm" :rules="mainFormRule" label-width="100px" :disabled="formDisabled">
@@ -134,9 +134,14 @@ export default {
                 del:''
             }             
         },
+        //点新增按钮之前的业务判断
         addBefore: {
             type: Function,
             default: () => {return true}
+        },
+        addFromServe:{
+            type:Boolean,
+            default:false
         },         
         handlerQueryParams: {
             type: Function,
@@ -264,7 +269,9 @@ export default {
             Object.keys(this.mainForm).forEach((k) => {
                 this.mainForm[k] = defaultForm[k]
             })
-            this.setFormInfoById(null)
+            if(this.addFromServe){
+                this.setFormInfoById(null)
+            }           
         },
         rowEdit (row) {
             this.pageState = 'edit'
@@ -348,6 +355,9 @@ export default {
                     this.saveLoading = false;
                     this.$message.success('数据保存成功！')
                 })
+                .catch((error)=>{
+                     this.saveLoading = false;
+                });                                
             })
         },
         goListPage () {

@@ -48,7 +48,39 @@ export const asyncRouterMap = [
           }
         ]
       },
-
+      
+      {
+        path: '/customer',
+        name: 'customer',
+        redirect: '/baseInfo/customer',
+        component: PageView,
+        hideChildrenInMenu: true, //设置子项隐藏
+        meta: { title: '客户管理', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages.Sell.Customers' ] },
+        children: [
+          {
+            path: '/baseInfo/customer',
+            name: 'sell_customer',
+            component: () => import('@/views/app/sell/baseInfo/Customer'),
+            meta: { title: '客户管理', keepAlive: true, permission: [ 'Pages.Sell.Customers' ]}
+          }
+        ]
+      },
+      {
+        path: '/product',
+        name: 'product',
+        redirect: '/baseInfo/product',
+        component: PageView,
+        hideChildrenInMenu: true, //设置子项隐藏
+        meta: { title: '产品管理', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages.Sell.Products' ] },
+        children: [
+          {
+            path: '/baseInfo/product',
+            name: 'sell_product',
+            component: () => import('@/views/app/sell/baseInfo/Product'),
+            meta: { title: '产品管理', keepAlive: true, permission: [ 'Pages.Sell.Products' ]}
+          }
+        ]
+      },      
       // admin
       {
         path: '/admin',
