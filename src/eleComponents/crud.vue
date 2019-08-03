@@ -208,7 +208,6 @@ export default {
             this.$refs.tableList.toggleRowSelection(row, true);
         }, 
         query() {
-            console.log(this.pageSize);
             this.loading=true;
             this.loadTableData();
         },               

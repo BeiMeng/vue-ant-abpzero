@@ -22,7 +22,7 @@
                 </el-form-item>                                                                           
           </template>
           <template slot="moreBtns">
-            <el-button type="info" icon="el-icon-download">导出Excel</el-button>
+            <el-button type="info" icon="el-icon-download" @click="ExportExcel">导出Excel</el-button>
           </template>      
           <template slot="tableItems">
                 <el-table-column label="名称" prop="name" header-align="center"></el-table-column> 
@@ -38,7 +38,7 @@
                 <el-table-column label="备注" prop="remark" header-align="center"></el-table-column>     
           </template>
           <template slot="formItems">
-               <div style="width:40vw;margin-left:30px">
+               <div style="width:40vw;margin-left:20%">
                     <el-form-item label="名称" prop="name">
                         <el-input v-model="mainForm.name" placeholder=""></el-input>
                     </el-form-item> 
@@ -64,6 +64,8 @@
 </template>
 
 <script>
+import { FileDownloadService } from '@/abpZero/utils/file-download.service.js'
+let _fileDownloadService = new FileDownloadService()
 export default {
   name: 'sell_customer',
   data() {
@@ -110,7 +112,17 @@ export default {
       return datas.map(p=>{
          return p.customer
       })
-    }
+    },
+    ExportExcel () {
+        let params =this.queryForm;
+        let getCustomersToExcelUrl = '/api/services/app/customers/GetCustomersToExcel'
+        httpClient.get(getCustomersToExcelUrl, {
+            params: params
+        })
+        .then(result => {
+            _fileDownloadService.downloadTempFile(result)
+        })
+    },
   },
  }
 </script>
