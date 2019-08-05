@@ -88,17 +88,20 @@
                     </el-form-item>                    
                 </el-col>                                  
             </el-row>
+ 
+            <div ref="quoteInfo">
             <el-table :data="quoteInfo" border :span-method="objectSpanMethod">
-              <el-table-column label="客户名称" prop="cname" :index='quoteInfo.length' header-align="center" align="center"></el-table-column>
-              <el-table-column label="产品名称" prop="pname"></el-table-column>
-              <el-table-column label="产品数量" prop="count" width="300">
-                <template slot-scope="scope">
-                    <el-input-number v-model="scope.row.count" placeholder="" style="width:100%" @change="countChange"></el-input-number>
-                </template>
-              </el-table-column>
-              <el-table-column label="产品单价" prop="price" header-align="center" align="center"></el-table-column>
-              <el-table-column label="总价" prop="totalPrice" :index='quoteInfo.length' header-align="center" align="center"></el-table-column>
-            </el-table>                                                    
+                <el-table-column label="客户名称" prop="cname" :index='quoteInfo.length' header-align="center" align="center"></el-table-column>
+                <el-table-column label="产品名称" prop="pname"></el-table-column>
+                <el-table-column label="产品数量" prop="count" width="300">
+                    <template slot-scope="scope" v-if="!saveImg">
+                        <el-input-number v-model="scope.row.count" placeholder="" style="width:100%" @change="countChange"></el-input-number>
+                    </template>
+                </el-table-column>
+                <el-table-column label="产品单价" prop="price" header-align="center" align="center"></el-table-column>
+                <el-table-column label="总价" prop="totalPrice" :index='quoteInfo.length' header-align="center" align="center"></el-table-column>
+            </el-table>
+            </div>                                                               
         </el-form>          
     </div>  
   </a-card>
@@ -106,7 +109,7 @@
 </template>
 
 <script>
-import { extname } from 'path';
+import html2canvas from "html2canvas"
 let defaultForm
 export default {
     name: 'sell_quote',
@@ -251,6 +254,8 @@ export default {
             createdCustomer:'',
             createdProducts:[],
             quoteInfo:[],
+            saveImg:false,
+
 
             pageState:'list',
             tableData: [],
@@ -500,6 +505,24 @@ export default {
         },
         save () {
             console.log(this.quoteInfo);
+            this.saveImg=true;
+            this.$nextTick(()=>{
+                html2canvas(this.$refs.quoteInfo).then(canvas => {
+                    // 转成图片，生成图片地址
+                    let imgUrl = canvas.toDataURL("image/png");
+                    // 创建隐藏的可下载链接
+                    var eleLink = document.createElement("a");
+                    eleLink.href = imgUrl; // 转换后的图片地址
+                    eleLink.download = "pictureName";
+                    // 触发点击
+                    document.body.appendChild(eleLink);
+                    eleLink.click();
+                    // 然后移除
+                    document.body.removeChild(eleLink); 
+                    this.saveImg=false;             
+                }); 
+            })
+        
             // this.$refs['mainForm'].validate((valid) => {
             //     if (!valid) { // 表单验证失败
             //         return false
