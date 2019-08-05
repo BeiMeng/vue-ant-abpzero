@@ -1,17 +1,8 @@
 <style lang='less' scoped>
-  .crud{
-      height: 100%;
-        .rowEdit{
-            font-size:18px;
-            color: #409EFF;
-            cursor:pointer;
-        }
-        .rowDel{
-            margin-left:15px;
-            font-size:18px;
-            color: red;
-            cursor:pointer;
-        }      
+  .saveImg{
+    width:auto; 
+    display:inline-block !important;
+    display:inline;      
   }
 </style>
 
@@ -88,19 +79,25 @@
                     </el-form-item>                    
                 </el-col>                                  
             </el-row>
- 
-            <div ref="quoteInfo">
-            <el-table :data="quoteInfo" border :span-method="objectSpanMethod">
-                <el-table-column label="客户名称" prop="cname" :index='quoteInfo.length' header-align="center" align="center"></el-table-column>
-                <el-table-column label="产品名称" prop="pname"></el-table-column>
-                <el-table-column label="产品数量" prop="count" width="300">
-                    <template slot-scope="scope" v-if="!saveImg">
+            <el-table :data="quoteInfo" border :span-method="objectSpanMethod" v-show="!saveImg">
+                <el-table-column label="客户名称" prop="cname" :index='quoteInfo.length' header-align="center"></el-table-column>
+                <el-table-column label="产品名称" prop="pname" header-align="center"></el-table-column>
+                <el-table-column label="产品数量" prop="count" width="300" header-align="center" align="center">
+                    <template slot-scope="scope">
                         <el-input-number v-model="scope.row.count" placeholder="" style="width:100%" @change="countChange"></el-input-number>
                     </template>
                 </el-table-column>
                 <el-table-column label="产品单价" prop="price" header-align="center" align="center"></el-table-column>
                 <el-table-column label="总价" prop="totalPrice" :index='quoteInfo.length' header-align="center" align="center"></el-table-column>
-            </el-table>
+            </el-table> 
+            <div ref="quoteInfo" class="saveImg">
+                <el-table :data="quoteInfo" border :span-method="objectSpanMethod">
+                    <el-table-column label="客户名称" prop="cname" :index='quoteInfo.length' header-align="center"  width="100%"></el-table-column>
+                    <el-table-column label="产品名称" prop="pname" width="100%" header-align="center"></el-table-column>
+                    <el-table-column label="产品数量" prop="count" width="100%" header-align="center" align="center"></el-table-column>
+                    <el-table-column label="产品单价" prop="price" header-align="center" align="center" width="100%"></el-table-column>
+                    <el-table-column label="总价" prop="totalPrice" :index='quoteInfo.length' header-align="center" align="center" width="100%"></el-table-column>
+                </el-table>
             </div>                                                               
         </el-form>          
     </div>  
@@ -504,7 +501,6 @@ export default {
             })            
         },
         save () {
-            console.log(this.quoteInfo);
             this.saveImg=true;
             this.$nextTick(()=>{
                 html2canvas(this.$refs.quoteInfo).then(canvas => {
