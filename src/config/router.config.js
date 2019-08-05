@@ -48,7 +48,22 @@ export const asyncRouterMap = [
           }
         ]
       },
-      
+      {
+        path: '/quote',
+        name: 'quote',
+        redirect: '/sell/quote',
+        component: PageView,
+        hideChildrenInMenu: true, //设置子项隐藏
+        meta: { title: '报价单', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages.Sell.Quotes' ] },
+        children: [
+          {
+            path: '/sell/quote',
+            name: 'sell_quote',
+            component: () => import('@/views/app/sell/Quote'),
+            meta: { title: '报价单', keepAlive: true, permission: [ 'Pages.Sell.Quotes' ]}
+          }
+        ]
+      },      
       {
         path: '/customer',
         name: 'customer',
