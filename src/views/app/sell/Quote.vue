@@ -1,9 +1,20 @@
 <style lang='less' scoped>
-  .saveImg{
-    width:auto; 
-    display:inline-block !important;
-    display:inline;      
-  }
+    .saveImg{
+        width:auto; 
+        display:inline-block !important;
+        display:inline;      
+    }
+    .rowEdit{
+        font-size:18px;
+        color: #409EFF;
+        cursor:pointer;
+    }
+    .rowDel{
+        margin-left:15px;
+        font-size:18px;
+        color: red;
+        cursor:pointer;
+    }   
 </style>
 
 <template>
@@ -38,24 +49,47 @@
             <el-button v-if="isGranted(permissionNames.add)"  icon="el-icon-plus" type="success" @click="add">新增</el-button>
             <slot name="moreBtns"></slot>
         </div>
-        <template v-for="(item,index) in tableData" >
-            <el-table :data="item" :key="index" :span-method="objectListSpanMethod">
-              <el-table-column label="创建时间" prop="" :index='item.length'></el-table-column>
-              <el-table-column label="客户名称" prop="" :index='item.length'></el-table-column>
-              <el-table-column label="产品名称" prop=""></el-table-column>
-              <el-table-column label="产品数量" prop=""></el-table-column>
-              <el-table-column label="产品单价" prop=""></el-table-column>
-              <el-table-column label="总价" prop="" :index='item.length'></el-table-column>
+        <template v-for="(item,index) in tableData">
+            <el-table :data="item" :key="index" :span-method="objectListSpanMethod" border>
+              <el-table-column label="创建时间" prop="creationTime" :index='item.length' header-align="center" align="center">
+                    <template slot-scope="scope">
+                        {{dateTimeFormat(scope.row.creationTime)}}
+                    </template>                       
+              </el-table-column>
+              <el-table-column label="销售类型" :index='item.length' header-align="center" align="center">
+                    <template slot-scope="scope">
+                        {{getSellTypeLabel(scope.row.sellType)}}
+                    </template>  
+              </el-table-column>
+              <el-table-column label="客户名称" prop="cname" :index='item.length' header-align="center"></el-table-column>
+              <el-table-column label="产品名称" prop="name" header-align="center"></el-table-column>
+              <el-table-column label="产品数量" prop="count" header-align="center" align="center"></el-table-column>
+              <el-table-column label="产品单价" prop="price" header-align="center" align="center"></el-table-column>
+              <el-table-column label="总价" prop="totalPrice" :index='item.length' header-align="center" align="center"></el-table-column>
+              <el-table-column label="下载图片" header-align="center" align="center" :index='item.length'>
+                    <template slot-scope="scope">
+                        <el-button type="primary" @click="downloadImg(item,scope.row.cname)">下载</el-button>
+                    </template>                                   
+              </el-table-column>
+                <el-table-column v-if="isGranted(permissionNames.edit) || isGranted(permissionNames.del)" fixed="right" label="操作" width="120" header-align="center" align="center" :index='item.length'>
+                    <template slot-scope="scope">
+                        <el-row>
+                            <i v-if="isGranted(permissionNames.edit)" class="el-icon-edit rowEdit" title="编辑" @click="rowEdit(item)"></i>
+                            <i v-if="isGranted(permissionNames.del)" class="el-icon-delete rowDel" title="删除" @click="rowDel(scope.row)"></i>
+                        </el-row>
+                    </template>
+                </el-table-column>               
             </el-table>
+            <a-divider/>
         </template>
     </div>
     <div v-show="pageState!='list'">
         <div class="table-operator" :style="`text-align: ${opPosition}`">
             <el-button  icon="el-icon-back" @click="goListPage">返回</el-button>
             <el-button  icon="el-icon-document" type="primary" @click="save" :disabled="formDisabled" :loading="saveLoading">{{saveingTxt}}</el-button>
-            <slot name="moreFormBtns"></slot>
+            <el-button  icon="el-icon-document" type="primary" @click="saveAndDownLoad" :disabled="formDisabled" :loading="saveLoading">{{saveingAndDownLoadTxt}}</el-button>
         </div>      
-        <el-form :model="mainForm" ref="mainForm" :rules="mainFormRule" label-width="100px" :disabled="formDisabled">
+        <el-form label-width="100px" :disabled="formDisabled">
             <el-row>
                 <el-col :span="4">
                     <el-form-item label="销售类型">
@@ -81,7 +115,7 @@
             </el-row>
             <el-table :data="quoteInfo" border :span-method="objectSpanMethod" v-show="!saveImg">
                 <el-table-column label="客户名称" prop="cname" :index='quoteInfo.length' header-align="center"></el-table-column>
-                <el-table-column label="产品名称" prop="pname" header-align="center"></el-table-column>
+                <el-table-column label="产品名称" prop="name" header-align="center"></el-table-column>
                 <el-table-column label="产品数量" prop="count" width="300" header-align="center" align="center">
                     <template slot-scope="scope">
                         <el-input-number v-model="scope.row.count" placeholder="" style="width:100%" @change="countChange"></el-input-number>
@@ -89,18 +123,18 @@
                 </el-table-column>
                 <el-table-column label="产品单价" prop="price" header-align="center" align="center"></el-table-column>
                 <el-table-column label="总价" prop="totalPrice" :index='quoteInfo.length' header-align="center" align="center"></el-table-column>
-            </el-table> 
-            <div ref="quoteInfo" class="saveImg">
-                <el-table :data="quoteInfo" border :span-method="objectSpanMethod">
-                    <el-table-column label="客户名称" prop="cname" :index='quoteInfo.length' header-align="center"  width="100%"></el-table-column>
-                    <el-table-column label="产品名称" prop="pname" width="100%" header-align="center"></el-table-column>
-                    <el-table-column label="产品数量" prop="count" width="100%" header-align="center" align="center"></el-table-column>
-                    <el-table-column label="产品单价" prop="price" header-align="center" align="center" width="100%"></el-table-column>
-                    <el-table-column label="总价" prop="totalPrice" :index='quoteInfo.length' header-align="center" align="center" width="100%"></el-table-column>
-                </el-table>
-            </div>                                                               
+            </el-table>                                                             
         </el-form>          
-    </div>  
+    </div> 
+    <div ref="quoteInfo" class="saveImg" v-if="saveImg">
+        <el-table :data="downImgInfo" border :span-method="objectSpanMethod">
+            <el-table-column label="客户名称" prop="cname" :index='downImgInfo.length' header-align="center"  width="100%"></el-table-column>
+            <el-table-column label="产品名称" prop="name" width="100%" header-align="center"></el-table-column>
+            <el-table-column label="产品数量" prop="count" width="100%" header-align="center" align="center"></el-table-column>
+            <el-table-column label="产品单价" prop="price" header-align="center" align="center" width="100%"></el-table-column>
+            <el-table-column label="总价" prop="totalPrice" :index='downImgInfo.length' header-align="center" align="center" width="100%"></el-table-column>
+        </el-table>
+    </div>        
   </a-card>
 
 </template>
@@ -110,28 +144,7 @@ import html2canvas from "html2canvas"
 let defaultForm
 export default {
     name: 'sell_quote',
-    props: {
-        mainForm: {
-            type: Object,
-            default:()=>{} 
-        },
-        mainFormRule: {
-            type: Object,
-            default:()=>{} 
-        },
-        //主键Id名称
-        keyId:{
-            type:String,
-            default:'id'
-        },
-        dataName:{
-            type:String,
-            default:'item'            
-        },
-        warp:{
-            type:Boolean,
-            default:false
-        },        
+    props: {    
         opPosition:{
             type:String,
             default:'right'
@@ -140,21 +153,6 @@ export default {
         showQuery:{
             type:Boolean,
             default:true
-        },
-        //是否分页
-        paged:{
-            type:Boolean,
-            default:true
-        },
-        //分页数量
-        pageSize:{
-            type:Number,
-            default:20
-        },
-        //服务端分页
-        sPagin:{
-            type:Boolean,
-            default:true            
         },
         //排序
         sorting:{
@@ -170,16 +168,25 @@ export default {
             type:Boolean,
             default:false
         },         
-        handlerQueryParams: {
-            type: Function,
-            default: (r) => {
-               r.createStartTime=r.timeRange[0];
-               r.createEndTime=r.timeRange[1]
-            }
-        }, 
         handlerTableDatas: {
             type: Function,
-            default: (r) => { return r }
+            default: (r) => { 
+                let d=r.map(p=>{
+                    let cname=p.customerName;
+                    let quote=p.quote;
+                    let item=p.quote.productInfos.map(t=>{
+                        t.cid=p.customerId;
+                        t.cname=cname;
+                        t.sellType=quote.sellType;
+                        t.creationTime=quote.creationTime;
+                        t.totalPrice=quote.totalPrice;
+                        t.qId=quote.id;
+                        return t;
+                    });
+                    return item;
+                });
+                return d 
+            }
         },
         handlerAddData: {
             type: Function,
@@ -205,7 +212,7 @@ export default {
                 customerNameFilter:'',
                 timeRange:[]
             },
-            sellTypes:[{name:'内贸',value:'internalPrice'},{name:'外贸',value:'externalPrice'},{name:'代发',value:'insteadPrice'}],    
+            sellTypes:[{name:'内贸',value:'internalPrice',index:0},{name:'外贸',value:'externalPrice',index:1},{name:'代发',value:'insteadPrice',index:2}],    
             pickerOptions: {
                 shortcuts: [{
                     text: '最近一周',
@@ -252,8 +259,10 @@ export default {
             createdProducts:[],
             quoteInfo:[],
             saveImg:false,
+            createdCustomerObj:null,
+            downImgInfo:[],
 
-
+            editId:null,
             pageState:'list',
             tableData: [],
             loading:false,
@@ -279,6 +288,9 @@ export default {
         },
         saveingTxt: function () {
             return this.saveLoading?'保存中...':'保存';
+        },
+        saveingAndDownLoadTxt: function () {
+            return this.saveLoading?'保存中...':'保存并截图';
         }                 
     },
     mounted(){
@@ -294,13 +306,15 @@ export default {
             this.productList=result.items.map(p=>{
                 return p.product;
             });                 
-        })
-
-        defaultForm = _.cloneDeep(this.mainForm);        
+        })       
     },
     methods: {
+        getSellTypeLabel(val){
+            let sellType=this.sellTypes.find(p=>p.index==val);
+            return sellType.name;
+        },
         objectListSpanMethod({ row, column, rowIndex, columnIndex }) {            
-            if (columnIndex === 0 || columnIndex === 1 || columnIndex === 5) {
+            if (columnIndex === 0 || columnIndex === 1 || columnIndex === 2 || columnIndex === 6 || columnIndex === 7 || columnIndex === 8) {
                 if (rowIndex ===0) {
                     return {
                         rowspan: column.index,
@@ -340,13 +354,13 @@ export default {
                 for (let index = 0; index < this.createdProducts.length; index++) {
                     const element = this.createdProducts[index];
                     let product=this.productList.find(p=>p.id==element);
-                    let exitProduct=exitInfo.find(p=>p.pid==element);
+                    let exitProduct=exitInfo.find(p=>p.id==element);
                     let count=exitProduct?exitProduct.count:0;
                     this.quoteInfo.push({
                         cid:customer.id,
                         cname:customer.name,
-                        pid:product.id,
-                        pname:product.name,
+                        id:product.id,
+                        name:product.name,
                         count:count,
                         price:product[val]
                     })              
@@ -354,8 +368,9 @@ export default {
             }
         },     
         customerChange(val){
-            if(this.createdProducts.length!=0){
-               let customer=this.customerList.find(p=>p.id==val);
+            let customer=this.customerList.find(p=>p.id==val);
+            this.createdCustomerObj=customer;
+            if(this.createdProducts.length!=0){               
                for (let index = 0; index < this.quoteInfo.length; index++) {
                    const element = this.quoteInfo[index];
                    element.cid=customer.id;
@@ -374,13 +389,13 @@ export default {
             for (let index = 0; index < this.createdProducts.length; index++) {
                 const element = this.createdProducts[index];
                 let product=this.productList.find(p=>p.id==element);
-                let exitProduct=exitInfo.find(p=>p.pid==element);
+                let exitProduct=exitInfo.find(p=>p.id==element);
                 let count=exitProduct?exitProduct.count:0;                
                 this.quoteInfo.push({
                     cid:customer.id,
                     cname:customer.name,
-                    pid:product.id,
-                    pname:product.name,
+                    id:product.id,
+                    name:product.name,
                     count:count,
                     price:product[this.createdSellType]
                 })                
@@ -414,12 +429,13 @@ export default {
                 queryParams=Object.assign({sorting:this.sorting},queryParams);
             }
             //warp
-            let warpData=this.handlerQueryParams(queryParams);
-            if(warpData){
-                queryParams=warpData;
-            }
-            
-            this.getAllListByServer(queryParams)
+            let queryInfo=_.cloneDeep(queryParams); 
+            let sellTypeObj=this.sellTypes.find(p=>p.value==queryInfo.sellTypeFilter);
+
+            queryInfo.sellTypeFilter=sellTypeObj==null?null:sellTypeObj.index;
+            queryInfo.createStartTime=queryInfo.timeRange[0];
+            queryInfo.createEndTime=queryInfo.timeRange[1]                        
+            this.getAllListByServer(queryInfo)
             .then(result => {
                 //warp
                 let warpData=this.handlerTableDatas(result.items);
@@ -447,11 +463,20 @@ export default {
             this.createdSellType='internalPrice';
             this.createdCustomer='';
             this.createdProducts=[];
-            this.quoteInfo=[];                  
+            this.quoteInfo=[];
+            this.editId=null;                  
         },
-        rowEdit (row) {
-            this.pageState = 'edit'
-            this.setFormInfoById(row[this.keyId])
+        rowEdit (item) {
+            this.pageState = 'edit';
+            let sellType=this.sellTypes.find(p=>p.index==item[0].sellType);
+            this.createdSellType=sellType.value;
+            this.createdCustomer=item[0].cid;
+            this.createdProducts=item.map(p=>{
+                return p.id
+            });
+            this.quoteInfo=item;
+            this.editId=item[0].qId;
+            //this.setFormInfoById(row[this.keyId])
         },
         setFormInfoById (dataId) {
             this.selectDataId = dataId
@@ -488,7 +513,7 @@ export default {
                 content: '此操作将永久删除该数据, 是否继续?',
                 onOk () {
                 //后端删除
-                    self.delByServer(row[self.keyId])
+                    self.delByServer(row.qId)
                     .then(()=>{
                         self.pageState="list";
                         self.loadTableData();
@@ -500,63 +525,108 @@ export default {
                 }
             })            
         },
-        save () {
-            this.saveImg=true;
+        downloadImg(downImgInfo,picName){
+            this.saveImg=true;                    
             this.$nextTick(()=>{
-                html2canvas(this.$refs.quoteInfo).then(canvas => {
-                    // 转成图片，生成图片地址
-                    let imgUrl = canvas.toDataURL("image/png");
-                    // 创建隐藏的可下载链接
-                    var eleLink = document.createElement("a");
-                    eleLink.href = imgUrl; // 转换后的图片地址
-                    eleLink.download = "pictureName";
-                    // 触发点击
-                    document.body.appendChild(eleLink);
-                    eleLink.click();
-                    // 然后移除
-                    document.body.removeChild(eleLink); 
-                    this.saveImg=false;             
-                }); 
+                this.downImgInfo=_.cloneDeep(downImgInfo);
+                setTimeout(() => {
+                    html2canvas(this.$refs.quoteInfo, {
+                        dpi: window.devicePixelRatio*2,
+                        scale:2,
+                    }).then(canvas => {
+                        // 转成图片，生成图片地址
+                        let imgUrl = canvas.toDataURL("image/png",1.0);
+                        // 创建隐藏的可下载链接
+                        var eleLink = document.createElement("a");
+                        eleLink.href = imgUrl; // 转换后的图片地址
+                        eleLink.download = picName;
+                        // 触发点击
+                        document.body.appendChild(eleLink);
+                        eleLink.click();
+                        // 然后移除
+                        document.body.removeChild(eleLink); 
+                        this.saveImg=false;             
+                    }); 
+                }, 1000)                               
             })
-        
-            // this.$refs['mainForm'].validate((valid) => {
-            //     if (!valid) { // 表单验证失败
-            //         return false
-            //     }
-            //     let saveData = _.cloneDeep(this.mainForm)
-            //     if (this.pageState == 'edit') {
-            //         saveData[this.keyId] = this.selectDataId
-            //     }
-            //     let data;
-            //     if(!this.warp){
-            //         data=saveData;
-            //     }else{   //特殊的有嵌套
-            //         data=new Object();
-            //         data[this.dataName] = saveData;
-            //     }
-
-            //     // todo warp
-            //     let handlerData=data;
-            //     let warpData = this.handlerSaveData(data)
-            //     if(warpData){
-            //         handlerData=warpData;
-            //     }               
-            //     this.saveLoading = true
-            //     this.saveServer(handlerData)
-            //     .then((result) => {
-            //         this.loadTableData()
-            //         this.goListPage();
-            //         this.saveLoading = false;
-            //         this.$message.success('数据保存成功！')
-            //     })
-            //     .catch((error)=>{
-            //          this.saveLoading = false;
-            //     });                                
-            // })
+        },
+        getSaveInfo(){
+            if(this.createdProducts.length==0){
+                this.$message.warning("请选择至少一个产品！");
+                return false;
+            }            
+            if(this.createdCustomer==''){
+                this.$message.warning("请选择一个客户！");
+                return false;
+            }
+            let existZero=false;
+            for (let index = 0; index < this.quoteInfo.length; index++) {
+                const element = this.quoteInfo[index];
+                if(element.count==0){
+                    existZero=true;
+                    break;
+                }
+            } 
+            if(existZero){
+                this.$message.warning("选择的产品的数量不能为0！");
+                return false;
+            }
+            this.countChange();
+            let sellTypeObj=this.sellTypes.find(p=>p.value==this.createdSellType);
+            let productInfos=this.quoteInfo.map(p=>{
+                return {
+                    id:p.id,
+                    name:p.name,
+                    count:p.count,
+                    price:p.price
+                };
+            });
+            let saveData={
+                id:this.editId,
+                sellType:sellTypeObj.index,
+                customerId:this.createdCustomer,
+                productInfos:productInfos
+            }; 
+            return saveData; 
+        },
+        saveAndDownLoad(){
+            let saveData=this.getSaveInfo();
+            if(!saveData){
+                return;
+            }         
+            this.saveLoading = true
+            this.saveServer(saveData)
+            .then((result) => {
+                this.goListPage();
+                this.saveLoading = false;
+                this.query();
+                this.$message.success('数据保存成功！');
+                this.downloadImg(this.quoteInfo,this.createdCustomerObj.name);
+            })
+            .catch((error)=>{
+                this.saveLoading = false;
+            }); 
+        },
+        save () {
+            let saveData=this.getSaveInfo();
+            if(!saveData){
+                return;
+            }         
+            console.log(saveData);
+            this.saveLoading = true
+            this.saveServer(saveData)
+            .then((result) => {
+                this.goListPage();
+                this.query();
+                this.saveLoading = false;
+                this.$message.success('数据保存成功！')
+            })
+            .catch((error)=>{
+                this.saveLoading = false;
+            }); 
         },
         goListPage () {
             this.handlerGoList();
-            this.$refs['mainForm'].resetFields()
             this.pageState = 'list'
         },
         getByServer (dataId) {
@@ -571,7 +641,7 @@ export default {
         },
         delByServer (dataId) {
             let params = {}
-            params[this.keyId] = dataId
+            params['id'] = dataId
             return httpClient.delete(this.apiUrl.del, {
                 params: params
             })
