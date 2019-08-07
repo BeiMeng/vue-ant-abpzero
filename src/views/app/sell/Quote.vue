@@ -128,8 +128,8 @@
     </div> 
     <div ref="quoteInfo" class="saveImg" v-if="saveImg">
         <el-table :data="downImgInfo" border :span-method="objectSpanMethod">
-            <el-table-column label="客户名称" prop="cname" :index='downImgInfo.length' header-align="center"  width="100%"></el-table-column>
-            <el-table-column label="产品名称" prop="name" width="100%" header-align="center"></el-table-column>
+            <el-table-column label="客户名称" prop="cname" :index='downImgInfo.length' header-align="center" align="center"  width="100%"></el-table-column>
+            <el-table-column label="产品名称" prop="name" width="100%" header-align="center" align="center"></el-table-column>
             <el-table-column label="产品数量" prop="count" width="100%" header-align="center" align="center"></el-table-column>
             <el-table-column label="产品单价" prop="price" header-align="center" align="center" width="100%"></el-table-column>
             <el-table-column label="总价" prop="totalPrice" :index='downImgInfo.length' header-align="center" align="center" width="100%"></el-table-column>

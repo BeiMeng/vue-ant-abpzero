@@ -1,6 +1,6 @@
 const appConfig=process.env.NODE_ENV === 'production' ?
 {
-    "remoteServiceBaseUrl": "http://www.tbkmama.com:81", //http://www.tbkmama.com:81
+    "remoteServiceBaseUrl": "http://www.tbkmama.com:9000", //http://www.tbkmama.com:81
     "appBaseUrl": "http://localhost:8080",
     "localeMappings": [
       {
