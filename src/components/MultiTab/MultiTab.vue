@@ -145,7 +145,10 @@ export default {
           <span style={{ userSelect: 'none' }}>{ title }</span>
         </a-dropdown>
       )
-    }
+    },
+    tabChange(val){
+      this.$router.push({ path: val })
+    },
   },
   watch: {
     '$route': function (newVal) {
@@ -155,9 +158,9 @@ export default {
         this.pages.push(newVal)
       }
     },
-    activeKey: function (newPathKey) {
-      this.$router.push({ path: newPathKey })
-    }
+    // activeKey: function (newPathKey) {
+    //   this.$router.push({ path: newPathKey })
+    // }
   },
   render () {
     const { onEdit, $data: { pages } } = this
@@ -180,6 +183,7 @@ export default {
         <div class="ant-pro-multi-tab-wrapper">
           <a-tabs
             hideAdd
+            on-change={this.tabChange}
             type={'editable-card'}
             v-model={this.activeKey}
             tabBarStyle={{ background: '#FFF', margin: 0, paddingLeft: '16px', paddingTop: '1px' }}

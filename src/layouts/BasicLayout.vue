@@ -93,7 +93,8 @@ export default {
   computed: {
     ...mapState({
       // 动态主路由
-      mainMenu: state => state.permission.menus
+      mainMenu: state => state.permission.menus,
+      multiTab: state => state.app.multiTab
     }),
     contentPaddingLeft () {
       if (!this.fixSidebar || this.isMobile()) {
