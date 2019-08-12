@@ -1,5 +1,8 @@
 <style lang='less' scoped>
     .saveImg{
+        //position: absolute;  //一定要用position：absolute 目的是将这个div 脱离文档流,目標是可截取非可视区域的内容
+        //left: 0px;
+        //top:0px;
         width:auto; 
         display:inline-block !important;
         display:inline;      
@@ -19,6 +22,15 @@
 
 <template>
   <a-card :bordered="false" class="crud" v-loading="loading" element-loading-text="拼命加载中">
+    <div ref="quoteInfo" class="saveImg" v-if="saveImg">
+        <el-table :data="downImgInfo" :header-cell-style="rowClass" :cell-style="cellStyle" :span-method="objectSpanMethod">
+            <el-table-column label="客户名称" prop="cname" :index='downImgInfo.length' header-align="center" align="center"  width="100%"></el-table-column>
+            <el-table-column label="产品名称" prop="name" width="100%" header-align="center" align="center"></el-table-column>
+            <el-table-column label="产品数量" prop="count" width="100%" header-align="center" align="center"></el-table-column>
+            <el-table-column label="产品单价" prop="price" header-align="center" align="center" width="100%"></el-table-column>
+            <el-table-column label="总价" prop="totalPrice" :index='downImgInfo.length' header-align="center" align="center" width="100%"></el-table-column>
+        </el-table>
+    </div>        
     <div v-show="pageState=='list'">
         <div class="table-page-search-wrapper" v-show="showQuery">
             <el-form :inline="true" :model="queryForm" ref="queryForm">
@@ -125,16 +137,7 @@
                 <el-table-column label="总价" prop="totalPrice" :index='quoteInfo.length' header-align="center" align="center"></el-table-column>
             </el-table>                                                             
         </el-form>          
-    </div> 
-    <div ref="quoteInfo" class="saveImg" v-if="saveImg">
-        <el-table :data="downImgInfo" border :span-method="objectSpanMethod">
-            <el-table-column label="客户名称" prop="cname" :index='downImgInfo.length' header-align="center" align="center"  width="100%"></el-table-column>
-            <el-table-column label="产品名称" prop="name" width="100%" header-align="center" align="center"></el-table-column>
-            <el-table-column label="产品数量" prop="count" width="100%" header-align="center" align="center"></el-table-column>
-            <el-table-column label="产品单价" prop="price" header-align="center" align="center" width="100%"></el-table-column>
-            <el-table-column label="总价" prop="totalPrice" :index='downImgInfo.length' header-align="center" align="center" width="100%"></el-table-column>
-        </el-table>
-    </div>        
+    </div>       
   </a-card>
 
 </template>
@@ -309,6 +312,13 @@ export default {
         })       
     },
     methods: {
+        rowClass() {
+            return 'background: #fff;color: #909399;font-weight: 600;border: 1px solid black'
+        },
+        cellStyle() {
+            return 'border: 1px solid black'
+        },
+
         getSellTypeLabel(val){
             let sellType=this.sellTypes.find(p=>p.index==val);
             return sellType.name;
@@ -411,7 +421,7 @@ export default {
              for (let index = 0; index < this.quoteInfo.length; index++) {
                  const element = this.quoteInfo[index];
                  element.totalPrice=totalPrice;
-             }             
+             }          
         },      
         rowClick(row, event, column) {
             this.$refs.tableList.toggleRowSelection(row, true);
@@ -530,9 +540,19 @@ export default {
             this.$nextTick(()=>{
                 this.downImgInfo=_.cloneDeep(downImgInfo);
                 setTimeout(() => {
-                    html2canvas(this.$refs.quoteInfo, {
+                    let dom=this.$refs.quoteInfo;
+                    // var copyDom = dom.cloneNode(true);
+                    // copyDom.style.width=dom.clientWidth + "px";
+                    // copyDom.style.height=dom.clientHeight + "px";  
+                    // copyDom.style.position="absolute";   
+                    // copyDom.style.top="0px";            
+                    // let b=byTag('body')[0];
+                    // b.append(copyDom);                                                 
+                    html2canvas(dom, {
                         dpi: window.devicePixelRatio*2,
                         scale:2,
+                        width:dom.clientWidth,
+                        height:dom.clientHeight
                     }).then(canvas => {
                         // 转成图片，生成图片地址
                         let imgUrl = canvas.toDataURL("image/png",1.0);
@@ -547,7 +567,7 @@ export default {
                         document.body.removeChild(eleLink); 
                         this.saveImg=false;             
                     }); 
-                }, 1000)                               
+                }, 500)                               
             })
         },
         getSaveInfo(){

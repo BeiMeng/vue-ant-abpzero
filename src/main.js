@@ -20,7 +20,7 @@ Vue.config.productionTip = false
 // mount axios Vue.$http and this.$http
 //Vue.use(VueAxios)
 
-
+import './utils/dom/index'
 import * as _ from 'lodash'
 window._=_;
 import * as moment from 'moment';
