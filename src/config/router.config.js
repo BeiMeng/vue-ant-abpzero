@@ -116,27 +116,27 @@ export const asyncRouterMap = [
             component: () => import('@/views/app/admin/Role'),
             meta: { title: '角色管理', keepAlive: true, icon: 'team', permission: [ 'Pages.Administration.Roles' ] }
           },
-          // {
-          //   path: '/admin1',
-          //   name: 'admin1',
-          //   redirect: '/admin1/test',
-          //   component: null, //多级菜单component设置为null
-          //   meta: { title: '多级菜单', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages.Administration' ] },
-          //   children: [
-          //     {
-          //       path: '/admin/test',
-          //       name: 'admin_test',
-          //       component: () => import('@/views/app/admin/Test'),
-          //       meta: { title: '页面一', keepAlive: true, icon: 'user', permission: [ 'Pages.Administration.Users' ] }
-          //     },
-          //     {
-          //       path: '/admin/test1',
-          //       name: 'admin_test1',
-          //       component: () => import('@/views/app/admin/Test1'),
-          //       meta: { title: '页面二', keepAlive: true, icon: 'team', permission: [ 'Pages.Administration.Roles' ] }
-          //     },          
-          //   ]
-          // }                            
+          {
+            path: '/admin1',
+            name: 'admin1',
+            redirect: '/admin1/test',
+            component: null, //多级菜单component设置为null
+            meta: { title: '多级菜单', keepAlive: true, icon: bxAnaalyse, permission: [ 'Pages.Administration' ] },
+            children: [
+              {
+                path: '/admin/test',
+                name: 'admin_test',
+                component: () => import('@/views/app/admin/Test'),
+                meta: { title: '页面一', keepAlive: true, icon: 'user', permission: [ 'Pages.Administration.Users' ] }
+              },
+              {
+                path: '/admin/test1',
+                name: 'admin_test1',
+                component: () => import('@/views/app/admin/Test1'),
+                meta: { title: '页面二', keepAlive: true, icon: 'team', permission: [ 'Pages.Administration.Roles' ] }
+              },          
+            ]
+          }                            
         ]
       },
 

@@ -17,12 +17,19 @@
         font-size:18px;
         color: red;
         cursor:pointer;
-    }   
+    } 
+    .takeCapture {
+        position: fixed !important;
+        top: 0px !important;
+        left: 0px !important;
+        margin: 0px !important;
+        transform: scale(1) !important;
+    }      
 </style>
 
 <template>
   <a-card :bordered="false" class="crud" v-loading="loading" element-loading-text="拼命加载中">
-    <div ref="quoteInfo" class="saveImg" v-if="saveImg">
+    <div ref="quoteInfo" class="saveImg takeCapture" v-if="saveImg">
         <el-table :data="downImgInfo" :header-cell-style="rowClass" :cell-style="cellStyle" :span-method="objectSpanMethod">
             <el-table-column label="客户名称" prop="cname" :index='downImgInfo.length' header-align="center" align="center"  width="100%"></el-table-column>
             <el-table-column label="产品名称" prop="name" width="100%" header-align="center" align="center"></el-table-column>
@@ -78,11 +85,11 @@
               <el-table-column label="产品数量" prop="count" header-align="center" align="center"></el-table-column>
               <el-table-column label="产品单价" prop="price" header-align="center" align="center"></el-table-column>
               <el-table-column label="总价" prop="totalPrice" :index='item.length' header-align="center" align="center"></el-table-column>
-              <el-table-column label="下载图片" header-align="center" align="center" :index='item.length'>
+              <!-- <el-table-column label="下载图片" header-align="center" align="center" :index='item.length'>
                     <template slot-scope="scope">
                         <el-button type="primary" @click="downloadImg(item,scope.row.cname)">下载</el-button>
                     </template>                                   
-              </el-table-column>
+              </el-table-column> -->
                 <el-table-column v-if="isGranted(permissionNames.edit) || isGranted(permissionNames.del)" fixed="right" label="操作" width="120" header-align="center" align="center" :index='item.length'>
                     <template slot-scope="scope">
                         <el-row>
@@ -144,6 +151,7 @@
 
 <script>
 import html2canvas from "html2canvas"
+import { debuglog } from 'util';
 let defaultForm
 export default {
     name: 'sell_quote',
@@ -555,7 +563,7 @@ export default {
                         height:dom.clientHeight
                     }).then(canvas => {
                         // 转成图片，生成图片地址
-                        let imgUrl = canvas.toDataURL("image/png",1.0);
+                        let imgUrl = canvas.toDataURL("image/png",0.1);
                         // 创建隐藏的可下载链接
                         var eleLink = document.createElement("a");
                         eleLink.href = imgUrl; // 转换后的图片地址
@@ -621,7 +629,8 @@ export default {
                 this.saveLoading = false;
                 this.query();
                 this.$message.success('数据保存成功！');
-                this.downloadImg(this.quoteInfo,this.createdCustomerObj.name);
+                let customer=this.customerList.find(p=>p.id==this.createdCustomer);           
+                this.downloadImg(this.quoteInfo,customer.name);                
             })
             .catch((error)=>{
                 this.saveLoading = false;
