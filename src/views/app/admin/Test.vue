@@ -10,7 +10,9 @@
     <el-button size="small" type="primary">点击上传</el-button>
     <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
   </el-upload>  
-  <el-button type="warning" @click="downLoad">下载文件</el-button>  
+  <el-button type="warning" @click="downLoad">下载文件</el-button>
+  <el-input v-model="msg" placeholder=""></el-input>
+  <el-button type="success" @click="sendMsg">消息推送</el-button>  
   </div>
 </template>
 
@@ -28,7 +30,8 @@ export default {
           headers:{
             Authorization:'Bearer '+_tokenService.getToken()
           },
-          uploadId:''
+          uploadId:'',
+          msg:''
       }
   },
   methods: {
@@ -38,6 +41,19 @@ export default {
     },
     downLoad(){
       _fileDownloadService.downloadUploadFile(this.uploadId)
+    },
+    sendMsg(){
+      let url = "/api/TokenAuth/TestNotification";
+      let params={
+        message:this.msg,
+        severity:'info'
+      };
+      httpClient.get(url, {
+          params: params
+      })
+      .then(result => {
+          console.log(result);
+      })      
     }
   },
 }

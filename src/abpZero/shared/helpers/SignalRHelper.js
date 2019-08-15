@@ -14,7 +14,9 @@ export class SignalRHelper {
         };
         let script = document.createElement('script');
         script.onload = () => {
-            callback();
+            if(callback){
+                callback();
+            }
         };
         script.src = AppConsts.appBaseUrl + '/static/abp-web-resources/abp.signalr-client.js';
         document.body.appendChild(script);

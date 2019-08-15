@@ -41,7 +41,7 @@
       </a-spin>
     </template>
     <span @click="fetchNotice" class="header-notice" ref="noticeRef">
-      <a-badge count="12">
+      <a-badge :count="notifyCount">
         <a-icon style="font-size: 16px; padding: 4px" type="bell" />
       </a-badge>
     </span>
@@ -54,8 +54,16 @@ export default {
   data () {
     return {
       loadding: false,
-      visible: false
+      visible: false,
+      notifyCount:12
     }
+  },
+  mounted(){
+      let self=this;
+      abp.event.on('abp.notifications.received', userNotification => {
+          console.log(userNotification);
+          self.notifyCount+=1;
+      });
   },
   methods: {
     fetchNotice () {

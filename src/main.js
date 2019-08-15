@@ -50,6 +50,10 @@ import { SignalRHelper } from '@/abpZero/shared/helpers/SignalRHelper';
       handleLogoutRequest(new AppAuthService()); 
       store.dispatch('init')  //初始化appSession
       .then((result) => {
+          if (result.user) {
+            SignalRHelper.initSignalR();
+            //SignalRHelper.initSignalR(() => { this._chatSignalrService.init(); });
+          }        
           new Vue({
               render: h => h(App),
               router,

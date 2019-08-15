@@ -22,7 +22,7 @@ const appSession = {
                 _sessionService.getCurrentLoginInformations()
                 .then(result=>{
                     commit('SET_APPSESSION', result)        
-                    resolve(result.theme);              
+                    resolve(result);              
                 })
                 .catch(function (error) {
                     reject(error);
