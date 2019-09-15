@@ -2,7 +2,7 @@
   <div class="admin_Role">
       <crud warp dataName="role" :showQuery="false" :paged="false" :mainForm="mainForm" :mainFormRule="mainFormRule" 
       :apiUrl="apiUrl" :permissionNames="permissionNames" :handlerAddData="handlerAddData" 
-      :handlerEditData="handlerEditData" :handlerGoList="handlerGoList" :handlerSaveData="handlerSaveData">
+      :handlerEditData="handlerEditData" :handlerGoList="handlerGoList" :handlerSaveData="handlerSaveData" addFromServe>
           <template slot="tableItems">
                 <el-table-column label="角色名称" prop="displayName" header-align="center"></el-table-column> 
                 <el-table-column label="系统"  header-align="center" align="center" width="120">

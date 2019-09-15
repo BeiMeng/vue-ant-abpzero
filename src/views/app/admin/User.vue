@@ -7,7 +7,7 @@
 <template>
   <div class="admim_user">      
       <crud warp dataName="user" :queryForm="queryForm" :mainForm="mainForm" :mainFormRule="mainFormRule" :apiUrl="apiUrl" :permissionNames="permissionNames" :pageSize="pageSize"
-        :handlerAddData="handlerAddData" :handlerEditData="handlerEditData" :handlerSaveData="handlerSaveData" :handlerGoList="handlerGoList">
+        :handlerAddData="handlerAddData" :handlerEditData="handlerEditData" :handlerSaveData="handlerSaveData" :handlerGoList="handlerGoList" addFromServe>
           <template slot="queryItems">
                 <el-form-item label="模糊搜索">
                     <el-input v-model="queryForm.filter" placeholder="" clearable></el-input>
