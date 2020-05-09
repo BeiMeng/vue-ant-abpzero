@@ -32,7 +32,7 @@
         <el-table ref="tableList" :data="tableData" border style="width: 100%" @row-click="rowClick">
             <!-- <el-table-column type="selection" width="55" header-align="center" align="center"></el-table-column> -->
             <slot name="tableItems"></slot>                  
-            <el-table-column v-if="isGranted(permissionNames.edit) || isGranted(permissionNames.del)" fixed="right" label="操作" width="120" header-align="center" align="center">
+            <el-table-column v-if="isGranted(permissionNames.edit) || isGranted(permissionNames.del)" label="操作" width="120" header-align="center" align="center">
                 <template slot-scope="scope">
                     <el-row>
                         <i v-if="isGranted(permissionNames.edit)" class="el-icon-edit rowEdit" title="编辑" @click="rowEdit(scope.row)"></i>

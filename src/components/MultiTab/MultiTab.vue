@@ -158,9 +158,9 @@ export default {
         this.pages.push(newVal)
       }
     },
-    // activeKey: function (newPathKey) {
-    //   this.$router.push({ path: newPathKey })
-    // }
+    activeKey: function (newPathKey) {
+      this.$router.push({ path: newPathKey })
+    }
   },
   render () {
     const { onEdit, $data: { pages } } = this
