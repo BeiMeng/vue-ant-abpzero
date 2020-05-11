@@ -174,7 +174,7 @@ export default {
       }
 
       return (
-        <Item {...{ key: menu.path }}>
+        <Item {...{ key: this.getFixPath(menu) }}>
           <tag {...{ props, attrs }}>
             {this.renderIcon(menu.meta.icon)}
             <span>{menu.meta.title}</span>
@@ -188,7 +188,7 @@ export default {
         menu.children.forEach(item => itemArr.push(this.renderItem(item)))
       }
       return (
-        <SubMenu {...{ key: menu.path }}>
+        <SubMenu {...{ key: this.getFixPath(menu) }}>
           <span slot="title">
             {this.renderIcon(menu.meta.icon)}
             <span>{menu.meta.title}</span>
@@ -206,6 +206,14 @@ export default {
       return (
         <Icon {... { props } }/>
       )
+    },
+    //add 2020/5/9 BeiDream：修复隐藏子菜单点击tab无法定位到相应左侧菜单问题
+    getFixPath(menu){
+      if(menu.hideChildrenInMenu){
+        return menu.redirect
+      }else{
+        return menu.path
+      }
     }
   },
 
