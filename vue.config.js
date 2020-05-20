@@ -8,6 +8,7 @@ function resolve (dir) {
 }
 
 // vue.config.js
+const CompressionPlugin = require('compression-webpack-plugin')
 module.exports = {
  
   configureWebpack: {
@@ -15,7 +16,7 @@ module.exports = {
       // 要引入的资源的名字：该模块提供给外部引用的名字(由对应的库自定)
       'vue': 'Vue',
       'vue-router': 'VueRouter',      
-      'element-ui': 'ELEMENT'      
+      'element-ui': 'ELEMENT'   
     },    
     plugins: [
       // Ignore all locale files of moment.js
@@ -67,6 +68,29 @@ module.exports = {
       .options({
         name: 'assets/[name].[hash:8].[ext]'
       })
+
+
+          // 这里是对环境的配置，不同环境对应不同的BASE_URL，以便axios的请求地址不同
+    config.plugin('define').tap(args => {
+      args[0]['process.env'].BASE_URL = JSON.stringify(process.env.BASE_URL)
+      return args
+    })
+    if (process.env.NODE_ENV === 'production') {
+      // #region 启用GZip压缩
+      config
+        .plugin('compression')
+        .use(CompressionPlugin, {
+          asset: '[path].gz[query]',
+          algorithm: 'gzip',
+          test: new RegExp('\\.(' + ['js', 'css'].join('|') + ')$'),
+          threshold: 10240,
+          minRatio: 0.8,
+          cache: true
+        })
+        .tap(args => { })
+
+      // #endregion
+    }
     /* svgRule.oneOf('inline')
       .resourceQuery(/inline/)
       .use('vue-svg-loader')
