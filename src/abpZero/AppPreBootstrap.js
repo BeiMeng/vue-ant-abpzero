@@ -17,6 +17,7 @@ export class AppPreBootstrap {
 
     AppConsts.appBaseUrlFormat = result.appBaseUrl
     AppConsts.remoteServiceBaseUrlFormat = result.remoteServiceBaseUrl
+    AppConsts.remoteSignalrBaseUrl = result.remoteSignalrBaseUrl
     AppConsts.localeMappings = result.localeMappings
 
     if (tenancyName == null) {

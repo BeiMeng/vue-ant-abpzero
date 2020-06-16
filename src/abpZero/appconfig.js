@@ -1,7 +1,8 @@
 const appConfig=process.env.NODE_ENV === 'production' ?
 {
-    "remoteServiceBaseUrl": "http://www.tbkmama.com:9000", //http://www.tbkmama.com:81
-    "appBaseUrl": "http://www.tbkmama.com:82",
+    "remoteServiceBaseUrl": "http://sys.tbkmama.com", //后端部署的api接口地址
+    "remoteSignalrBaseUrl": "http://sys.tbkmama.com", //后端部署的signalr地址，可以直连asp.net core  也可以配置反向代理地址(这样需要配置ws)
+    "appBaseUrl": "http://beidream.tbkmama.com",  //前端部署的地址
     "localeMappings": [
       {
         "from": "pt-BR",

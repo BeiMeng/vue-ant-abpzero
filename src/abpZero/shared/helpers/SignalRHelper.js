@@ -8,7 +8,7 @@ export class SignalRHelper {
             connect: undefined,
             hubs: undefined,
             qs: AppConsts.authorization.encrptedAuthTokenName + '=' + encodeURIComponent(encryptedAuthToken),
-            remoteServiceBaseUrl: AppConsts.remoteServiceBaseUrl,
+            remoteServiceBaseUrl: AppConsts.remoteSignalrBaseUrl,
             startConnection: undefined,
             url: '/signalr'
         };
