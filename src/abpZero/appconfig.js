@@ -20,7 +20,8 @@ const appConfig=process.env.NODE_ENV === 'production' ?
 }
 :
 {
-    "remoteServiceBaseUrl": "http://localhost:5000", //http://www.tbkmama.com:81
+    "remoteServiceBaseUrl": "http://localhost:5000", 
+    "remoteSignalrBaseUrl": "http://localhost:5000",
     "appBaseUrl": "http://localhost:4200",
     "localeMappings": [
       {
