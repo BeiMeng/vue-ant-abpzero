@@ -160,11 +160,11 @@
           </a-alert>
         </div>
       </div>
+    </a-drawer>
       <div class="setting-drawer-index-handle" @click="toggle">
         <a-icon type="setting" v-if="!visible"/>
         <a-icon type="close" v-else/>
-      </div>
-    </a-drawer>
+      </div>    
   </div>
 </template>
 
@@ -331,11 +331,11 @@ export default {
 
   .setting-drawer-index-handle {
     position: absolute;
-    top: 240px;
+    top: 110px;
     background: #1890ff;
     width: 48px;
     height: 48px;
-    right: 300px;
+    right: 0px;
     display: flex;
     justify-content: center;
     align-items: center;
