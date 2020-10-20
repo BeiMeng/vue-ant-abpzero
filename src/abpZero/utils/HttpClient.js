@@ -3,17 +3,28 @@ import axios from 'axios'
 import appconfig from '@/abpZero/appconfig'
 import Qs from 'qs'
 import * as moment from 'moment';
+import { AppConsts } from '@/abpZero/shared/AppConsts'
 //第一个参数为需要序列化的数据
 //第二个参数为配置选项
+import { TokenService } from '@/abpZero/abp-vue-module/auth/token.service'
+import { TokenAuthServiceProxy } from '@/abpZero/shared/service-proxies/TokenAuthServiceProxy'
+import { LocalStorageService } from '@/abpZero/shared/common/localStorage.Service'
 
- 
+let _tokenAuthServiceProxy = new TokenAuthServiceProxy()
+let _tokenService = new TokenService()
+let _localStorageService = new LocalStorageService()
 
 import { AbpHttpConfiguration,AbpHttpInterceptor } from '@/abpZero/abp-vue-module/abpHttpInterceptor'
 let _abpHttpConfiguration=new AbpHttpConfiguration();
 let _abpHttpInterceptor=new AbpHttpInterceptor(_abpHttpConfiguration);
+
+// import axiosRetry from 'axios-retry';
+
+// axiosRetry(axios, { retries: 3 });
+
 const HttpClient = axios.create({
     baseURL: appconfig.remoteServiceBaseUrl, // api 的 base_url
-    timeout: 5000, // request timeout
+    timeout: 15000, // request timeout //有的接口请求时间过长，超过此时间，显示为canceld
     paramsSerializer: function(params) {
       return Qs.stringify(params, {
             serializeDate: (date) => {
@@ -48,7 +59,6 @@ HttpClient.interceptors.request.use(
     }
 )
 
-  
   // response interceptor
 HttpClient.interceptors.response.use(
     /**
@@ -60,16 +70,71 @@ HttpClient.interceptors.response.use(
     response => {
       if(response.data.mock){  //mock 数据，约定格式为{mock:data}
         return response.data.mock
-      }      
+      }     
+      //401 未授权登出   //500 内部错误 转到错误页   //200  判断业务code 进行相应处理，比如处理多端登陆等
+      //return response.data         
       let result=_abpHttpConfiguration.handleResponse(response);
       return result;
-      //401 未授权登出   //500 内部错误 转到错误页   //200  判断业务code 进行相应处理，比如处理多端登陆等
-      //return response.data
+
     },
     error => {
-      console.log(error); // for debug
       let result=_abpHttpConfiguration.handleResponse(error.response);
-      return Promise.reject(error)
+      return Promise.reject(error);
+
+      // if (error.response) {    //todo 请求后401,进行刷新token.目前无法实现重新返回原请求问题
+      //   switch (error.response.status) {
+      //     case 401:
+      //       //abp后端刷新的验证失效全部改成AbpAuthorizationException 错误 
+      //       if(error.config.url.indexOf('/TokenAuth/RefreshToken')>=0){  
+      //         location.reload();
+      //       }
+      //       //登陆接口401进行正常异常处理流程
+      //       if(error.config.url.indexOf('/TokenAuth/Authenticate')>=0){  
+      //         _abpHttpConfiguration.handleResponse(error.response);
+      //         return Promise.reject(error)              
+      //       }
+
+      //       //其他接口，进行无感知刷新token流程
+      //       let refreshToken =_tokenService.getRefreshToken();
+      //       debugger
+      //       if (!refreshToken || refreshToken.trim() === '') {
+      //         location.reload();
+      //       }
+      //       _tokenAuthServiceProxy.refreshToken(refreshToken)
+      //       .then(tokenResult=>{
+      //         if (tokenResult && tokenResult.accessToken) {
+      //           let tokenExpireDate = (new Date(new Date().getTime() + 1000 * tokenResult.expireInSeconds));
+      //           _tokenService.setToken(tokenResult.accessToken, tokenExpireDate);
+    
+      //           _localStorageService.setItem(AppConsts.authorization.encrptedAuthTokenName,
+      //             {
+      //                 token: tokenResult.encryptedAccessToken,
+      //                 expireDate: tokenExpireDate
+      //             });
+      //             //就是重新调用接口获取数据
+      //             // var backoff = new Promise(resolve => {
+      //             //   resolve();
+      //             // });
+      //             // return backoff.then(r => {
+      //             //   return HttpClient(error.config);
+      //             // });
+      //             return new Promise(resolve => resolve(HttpClient(error.config)));
+      //         }else{
+      //           location.reload();
+      //         }             
+      //       })
+      //       .catch(error=>{
+      //         location.reload();
+      //       })
+      //       break;     
+      //     default:
+      //       let result=_abpHttpConfiguration.handleResponse(error.response);
+      //       return Promise.reject(error)
+      //   }
+      // }else{
+      //   let result=_abpHttpConfiguration.handleResponse(error.response);
+      //   return Promise.reject(error);  
+      // }           
     }
 )
 

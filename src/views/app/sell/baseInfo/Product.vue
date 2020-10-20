@@ -87,8 +87,9 @@ export default {
         apiUrl: {
             queryList: '/api/services/app/products/GetAll',
             getById: '/api/services/app/products/GetproductForEdit',
-            del: '/api/services/app/products/Delete',
-            save: '/api/services/app/products/CreateOrEdit'
+            add: '/api/services/app/products/CreateOrEdit',
+            edit: '/api/services/app/products/CreateOrEdit',
+            del: '/api/services/app/products/Delete',            
         },
         permissionNames: {
             add: 'Pages.Sell.Products.Create',

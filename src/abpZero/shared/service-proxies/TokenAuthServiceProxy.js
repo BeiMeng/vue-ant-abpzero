@@ -18,6 +18,11 @@ let TokenAuthServiceProxy = class TokenAuthServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
         return httpClient.get(url_)
     }
+    refreshToken(refreshToken) {
+        let url_ ="/api/TokenAuth/RefreshToken?refreshToken="+refreshToken;
+        url_ = url_.replace(/[?&]$/, "");
+        return httpClient.post(url_) 
+    }    
     /**
      * @param message (optional)
      * @param severity (optional)

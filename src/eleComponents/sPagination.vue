@@ -99,21 +99,27 @@ export default {
         let data = {}
         if (this.request.type == 'post') {
           httpClient.post(this.request.url, pagedParams)
-            .then(result => {
-              this.totalCount = result.totalCount
-              this.$emit('paginationData', result.items)
-            })
+          .then(result => {
+            this.totalCount = result.totalCount
+            this.$emit('paginationData', result.items)
+          })
+          .catch(err=>{
+              this.$emit('getDataFailed')
+          })           
         } else {
           httpClient.get(this.request.url, {
             params: pagedParams
           })
-            .then(result => {
-              this.totalCount = result.totalCount
-              this.$emit('paginationData', result.items)
-            })
+          .then(result => {
+            this.totalCount = result.totalCount
+            this.$emit('paginationData', result.items)
+          })
+          .catch(err=>{
+              this.$emit('getDataFailed')
+          })           
         }
       } catch (e) {
-        console.log(e)
+        this.$emit('getDataFailed')
         this.$emit('paginationData', [])
         this.$message.error(e)
       }
@@ -124,36 +130,32 @@ export default {
         return
       }
       try {
-        let data = {}
         if (this.request.type == 'post') {
-          data = await httpCalc.postAsync(
-            this.request.url,
-            this.params
-          )
-        } else {
-          data = await httpCalc.getAsync(
-            this.request.url, this.params
-          )
-        }
-        if (this.request.type == 'post') {
-          httpClient.post(this.request.url, pagedParams)
-            .then(result => {
-              this.totalCount = result.items.length
-              this.allData = result.items
-              this.$emit('paginationData', this.pagination(this.pageIndex, this.spSize, this.allData))
-            })
+          httpClient.post(this.request.url, this.params)
+          .then(result => {
+            this.totalCount = result.items.length
+            this.allData = result.items
+            this.$emit('paginationData', this.pagination(this.pageIndex, this.spSize, this.allData))
+          })
+          .catch(err=>{
+              this.$emit('getDataFailed')
+          })             
         } else {
           httpClient.get(this.request.url, {
-            params: pagedParams
+            params: this.params
           })
-            .then(result => {
-              this.totalCount = result.items.length
-              this.allData = result.items
-              this.$emit('paginationData', this.pagination(this.pageIndex, this.spSize, this.allData))
-            })
+          .then(result => {
+            this.totalCount = result.items.length
+            this.allData = result.items
+            this.$emit('paginationData', this.pagination(this.pageIndex, this.spSize, this.allData))
+          })
+          .catch(err=>{
+              this.$emit('getDataFailed')
+          })             
         }
       } catch (e) {
-        console.log(e)
+        this.$emit('getDataFailed')
+        this.$emit('paginationData', [])
         this.$message.error(e)
       }
     },

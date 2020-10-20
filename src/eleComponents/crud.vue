@@ -41,7 +41,7 @@
                 </template>
             </el-table-column> 
         </el-table>
-        <sPagination v-if="paged" ref="pagin" :request="request" :spSize.sync="spSize" @paginationData="getPaginData" :serverPagin="sPagin" @beforeGetData="beforeGetData"></sPagination>    
+        <sPagination @getDataFailed="getPaginationDataFailed" v-if="paged" ref="pagin" :request="request" :spSize.sync="spSize" @paginationData="getPaginData" :serverPagin="sPagin" @beforeGetData="beforeGetData"></sPagination>    
     </div>
     <div v-show="pageState!='list'">
         <div class="table-operator" :style="`text-align: ${opPosition}`">
@@ -122,8 +122,9 @@ export default {
             default: {
                 queryList:'',
                 getById:'',
-                del:'',
-                save:''
+                add:'',
+                edit:'',
+                del:''
             }               
         },
         permissionNames:{
@@ -238,6 +239,9 @@ export default {
                         this.tableData=result.items;
                     }
                     this.loading=false;                                                                           
+                })
+                .catch(err=>{
+                    this.loading=false;
                 }) 
             }
         },
@@ -259,6 +263,9 @@ export default {
                 this.tableData=list;
             }
             this.loading=false;                                   
+        },
+        getPaginationDataFailed(){
+            this.loading=false;
         },                
         add () {
             if(!this.addBefore()){
@@ -280,7 +287,7 @@ export default {
             this.selectDataId = dataId
             this.loading=true;
             this.getByServer(dataId)
-                .then(result => {
+            .then(result => {
                 this.loading=false;
                 let handlerResult = result
                 if (this.pageState == 'add') {
@@ -296,6 +303,9 @@ export default {
                 }
                 this.setFormInfo(handlerResult[this.dataName])
             })
+            .catch(err=>{
+                this.loading=false;
+            })             
         },
         setFormInfo (result) {
             let formData
@@ -316,7 +326,10 @@ export default {
                         self.pageState="list";
                         self.loadTableData();
                         self.$message.success("数据删除成功！");
-                    }) 
+                    })
+                    .catch(err=>{
+                        this.loading=false;
+                    })                      
                 },
                 onCancel () {
                     self.$message.info('已取消删除');                  
@@ -372,7 +385,11 @@ export default {
             })
         },
         saveServer (data) {
-            return httpClient.post(this.apiUrl.save, data)
+            if(this.pageState=="add"){
+                    return http.post(this.apiUrl.add,data);
+            }else{
+                    return http.post(this.apiUrl.edit,data)
+            }             
         },
         delByServer (dataId) {
             let params = {}

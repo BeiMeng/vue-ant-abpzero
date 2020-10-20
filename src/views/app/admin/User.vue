@@ -111,8 +111,9 @@ export default {
         apiUrl: {
             queryList: '/api/services/app/User/GetUsers',
             getById: '/api/services/app/User/GetUserForEdit',
-            del: '/api/services/app/User/DeleteUser',
-            save: '/api/services/app/User/CreateOrUpdateUser'
+            add: '/api/services/app/User/CreateOrUpdateUser',
+            edit: '/api/services/app/User/CreateOrUpdateUser',
+            del: '/api/services/app/User/DeleteUser'
         },
         permissionNames: {
             add: 'Pages.Administration.Users.Create',

@@ -79,8 +79,9 @@ export default {
         apiUrl: {
             queryList: '/api/services/app/Customers/GetAll',
             getById: '/api/services/app/Customers/GetCustomerForEdit',
-            del: '/api/services/app/Customers/Delete',
-            save: '/api/services/app/Customers/CreateOrEdit'
+            add: '/api/services/app/Customers/CreateOrEdit',
+            edit: '/api/services/app/Customers/CreateOrEdit',
+            del: '/api/services/app/Customers/Delete'
         },
         permissionNames: {
             add: 'Pages.Sell.Customers.Create',

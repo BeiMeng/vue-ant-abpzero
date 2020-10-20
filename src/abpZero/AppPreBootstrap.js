@@ -53,6 +53,13 @@ export class AppPreBootstrap {
       AppConsts.recaptchaSiteKey = abp.setting.get('Recaptcha.SiteKey')
       AppConsts.subscriptionExpireNootifyDayCount = parseInt(abp.setting.get('App.TenantManagement.SubscriptionExpireNotifyDayCount'))
       abp.localization.defaultSourceName = AppConsts.localization.defaultLocalizationSourceName
+
+      let showTenantChange=abp.multiTenancy.isEnabled && !(AppConsts.appBaseUrlFormat && AppConsts.appBaseUrlFormat.indexOf(AppConsts.tenancyNamePlaceHolderInUrl) >= 0);
+      if(!showTenantChange)  //域名解析租户模式下
+      {
+        abp.multiTenancy.setTenantIdCookie(AppConsts.appBaseUrl); //将访问域名写入cookie，然后http请求拦截器将域名写入header中，供后端读取解析租户
+      }
+      
       callback()
       // DynamicResourcesHelper.loadResources(callback);
     })

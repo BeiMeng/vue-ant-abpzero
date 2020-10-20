@@ -44,14 +44,16 @@ let AbpHttpConfiguration = class AbpHttpConfiguration {
     }
     handleUnAuthorizedRequest(messagePromise, targetUrl) {
         const self = this;
-        if (messagePromise) {
-            messagePromise.done(() => {
-                this.handleTargetUrl(targetUrl || '/');
-            });
-        }
-        else {
-            self.handleTargetUrl(targetUrl || '/');
-        }
+        setTimeout(() => {
+            if (messagePromise) {
+                messagePromise.done(() => {
+                    this.handleTargetUrl(targetUrl || '/');
+                });
+            }
+            else {
+                self.handleTargetUrl(targetUrl || '/');
+            }
+        }, 5000) //没权限的情况下,5秒中后自动重刷网站
     }
     handleNonAbpErrorResponse(response) {
         const self = this;
@@ -85,6 +87,9 @@ let AbpHttpConfiguration = class AbpHttpConfiguration {
             this.logError(ajaxResponse.error);
             this.showError(ajaxResponse.error);
             if (response.status === 401) {
+                if(response.config.url.indexOf('/TokenAuth/Authenticate')>=0){ //登陆接口的401，不进行页面跳转处理
+                    return;
+                }
                 this.handleUnAuthorizedRequest(null, ajaxResponse.targetUrl);
             }
         }
@@ -173,9 +178,9 @@ let AbpHttpInterceptor = class AbpHttpInterceptor {
         }
     }
     addTenantIdHeader(headers) {
-        let cookieTenantIdValue = this._utilsService.getCookieValue('Abp.TenantId');
-        if (cookieTenantIdValue && headers && headers['Abp.TenantId']==null) {
-            headers["Abp.TenantId"]=cookieTenantIdValue;
+        let cookieTenantIdValue = this._utilsService.getCookieValue(abp.multiTenancy.tenantIdCookieName);
+        if (cookieTenantIdValue && headers && headers[abp.multiTenancy.tenantIdCookieName]==null) {
+            headers[abp.multiTenancy.tenantIdCookieName]=cookieTenantIdValue;
         }
     }
     addAuthorizationHeaders(headers) {

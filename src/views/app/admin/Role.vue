@@ -78,8 +78,9 @@ export default {
       apiUrl:{
           queryList:'/api/services/app/Role/GetRoles',
           getById:'/api/services/app/Role/GetRoleForEdit',
-          del:'/api/services/app/Role/DeleteRole',
-          save:'/api/services/app/Role/CreateOrUpdateRole'
+          add:'/api/services/app/Role/CreateOrUpdateRole',
+          edit:'/api/services/app/Role/CreateOrUpdateRole',
+          del:'/api/services/app/Role/DeleteRole'
       },
       permissionNames:{
           add:'Pages.Administration.Roles.Create',
