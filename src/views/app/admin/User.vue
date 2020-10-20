@@ -69,10 +69,10 @@
                             <el-switch v-model="mainForm.setRandomPassword"  active-text='否' inactive-text='是' :active-value='false' :inactive-value='true'></el-switch>
                         </el-form-item> 
                         <el-form-item label="密码" prop="password" v-if="!mainForm.setRandomPassword">
-                            <el-input v-model="mainForm.password" placeholder=""></el-input>
+                            <el-input v-model="mainForm.password" placeholder="" show-password></el-input>
                         </el-form-item> 
                         <el-form-item label="密码(核对)" prop="againPassword" v-if="!mainForm.setRandomPassword">
-                            <el-input v-model="mainForm.againPassword" placeholder=""></el-input>
+                            <el-input v-model="mainForm.againPassword" placeholder="" show-password></el-input>
                         </el-form-item>  
                         <el-form-item label="是否激活">
                             <el-switch v-model="mainForm.isActive"  active-text='否' inactive-text='是' :active-value='false' :inactive-value='true'></el-switch>

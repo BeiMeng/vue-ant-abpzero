@@ -49,9 +49,12 @@
             <el-button  icon="el-icon-document" type="primary" @click="save" :disabled="formDisabled" :loading="saveLoading">{{saveingTxt}}</el-button>
             <slot name="moreFormBtns"></slot>
         </div>      
-        <el-form :model="mainForm" ref="mainForm" :rules="mainFormRule" label-width="100px" :disabled="formDisabled">
+        <el-form :model="mainForm" ref="mainForm" :rules="mainFormRule" label-width="100px" :disabled="formDisabled" v-show="!(useUpdateForm && pageState=='edit')">
             <slot name="formItems"></slot>                               
-        </el-form>          
+        </el-form>
+        <el-form :model="updateForm" ref="updateForm" :rules="updateFormRule" label-width="100px" :disabled="formDisabled" :v-if="useUpdateForm" v-show="pageState=='edit'">
+            <slot name="updateFormItems"></slot>                               
+        </el-form>                     
     </div>  
   </a-card>
 
@@ -70,15 +73,29 @@ export default {
             type: Object,
             default:()=>{} 
         },
+        useUpdateForm:{
+            type:Boolean,
+            default:false
+        },
+        updateForm: {
+            type: Object,
+            default:()=>{} 
+        },
+        updateFormRule: {
+            type: Object,
+            default:()=>{} 
+        },        
         //主键Id名称
         keyId:{
             type:String,
             default:'id'
         },
+        //不为空时获取单个实体和保存时，不进行包装
         dataName:{
             type:String,
-            default:'item'            
+            default:''            
         },
+        //保存的数据是否需要包装
         warp:{
             type:Boolean,
             default:false
@@ -296,23 +313,36 @@ export default {
                         handlerResult=warpData;
                     }              
                 } else {
-                    let warpData=this.handlerEditData(handlerResult);
-                    if(warpData){
-                        handlerResult=warpData;
+                    let warpEditData=this.handlerEditData(handlerResult);
+                    if(warpEditData){
+                        handlerResult=warpEditData;
                     }                  
                 }
-                this.setFormInfo(handlerResult[this.dataName])
+                console.log(this.dataName);
+                if(this.dataName!=""){
+                  this.setFormInfo(handlerResult[this.dataName])  
+                }else{
+                  this.setFormInfo(handlerResult)  
+                }
+                
             })
             .catch(err=>{
                 this.loading=false;
             })             
         },
         setFormInfo (result) {
-            let formData
-            formData = result
-            Object.keys(this.mainForm).forEach((k) => {
-                this.mainForm[k] = formData[k]
-            })   
+            let formData;
+            formData = result;
+            if(this.useUpdateForm && this.pageState == 'edit'){
+                Object.keys(this.updateForm).forEach((k) => {
+                    this.updateForm[k] = formData[k]
+                })  
+            }else{
+                Object.keys(this.mainForm).forEach((k) => {
+                    this.mainForm[k] = formData[k]
+                })  
+            }
+ 
         },
         rowDel (row) {
             let self=this;
@@ -337,40 +367,52 @@ export default {
             })            
         },
         save () {
-            this.$refs['mainForm'].validate((valid) => {
-                if (!valid) { // 表单验证失败
-                    return false
-                }
-                let saveData = _.cloneDeep(this.mainForm)
-                if (this.pageState == 'edit') {
-                    saveData[this.keyId] = this.selectDataId
-                }
-                let data;
-                if(!this.warp){
-                    data=saveData;
-                }else{   //特殊的有嵌套
-                    data=new Object();
-                    data[this.dataName] = saveData;
-                }
-
-                // todo warp
-                let handlerData=data;
-                let warpData = this.handlerSaveData(data)
-                if(warpData){
-                    handlerData=warpData;
-                }               
-                this.saveLoading = true
-                this.saveServer(handlerData)
-                .then((result) => {
-                    this.loadTableData()
-                    this.goListPage();
-                    this.saveLoading = false;
-                    this.$message.success('数据保存成功！')
+            if(this.useUpdateForm && this.pageState == 'edit'){
+                this.$refs['updateForm'].validate((valid) => {
+                    if (!valid) { // 表单验证失败
+                        return false
+                    }
+                    this.saveData(this.updateForm);               
                 })
-                .catch((error)=>{
-                     this.saveLoading = false;
-                });                                
+            }else{
+                this.$refs['mainForm'].validate((valid) => {
+                    if (!valid) { // 表单验证失败
+                        return false
+                    }
+                    this.saveData(this.mainForm);               
+                })
+            }
+        },
+        saveData(formData){
+            let saveData = _.cloneDeep(formData)
+            if (this.pageState == 'edit') {
+                saveData[this.keyId] = this.selectDataId
+            }
+            let data;
+            if(this.warp && this.dataName !=''){  //特殊的有嵌套
+              data=new Object();
+              data[this.dataName] = saveData;                
+            }else{   
+                data=saveData;
+            }
+
+            // todo warp
+            let handlerData=data;
+            let warpData = this.handlerSaveData(data,this.pageState)
+            if(warpData){
+                handlerData=warpData;
+            }               
+            this.saveLoading = true
+            this.saveServer(handlerData)
+            .then((result) => {
+                this.loadTableData()
+                this.goListPage();
+                this.saveLoading = false;
+                this.$message.success('数据保存成功！')
             })
+            .catch((error)=>{
+                    this.saveLoading = false;
+            }); 
         },
         goListPage () {
             this.handlerGoList();
@@ -386,9 +428,9 @@ export default {
         },
         saveServer (data) {
             if(this.pageState=="add"){
-                    return http.post(this.apiUrl.add,data);
+                    return httpClient.post(this.apiUrl.add,data);
             }else{
-                    return http.post(this.apiUrl.edit,data)
+                    return httpClient.post(this.apiUrl.edit,data)
             }             
         },
         delByServer (dataId) {

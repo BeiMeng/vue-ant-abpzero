@@ -95,7 +95,7 @@ export const asyncRouterMap = [
             meta: { title: '产品管理', keepAlive: true, permission: [ 'Pages.Sell.Products' ]}
           }
         ]
-      },      
+      },           
       // admin
       {
         path: '/admin',
@@ -104,6 +104,12 @@ export const asyncRouterMap = [
         component: PageView,
         meta: { title: '系统管理', keepAlive: true, icon: 'setting', permission: [ 'Pages.Administration' ] },
         children: [
+          {
+            path: '/admin/tenant',
+            name: 'admim_tenant',
+            component: () => import('@/views/app/admin/Tenant'),
+            meta: { title: '租户管理', keepAlive: true, icon: 'user', permission: [ 'Pages.Tenants' ] }
+          },          
           {
             path: '/admin/user',
             name: 'admim_user',

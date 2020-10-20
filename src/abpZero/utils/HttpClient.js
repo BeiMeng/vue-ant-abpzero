@@ -24,7 +24,7 @@ let _abpHttpInterceptor=new AbpHttpInterceptor(_abpHttpConfiguration);
 
 const HttpClient = axios.create({
     baseURL: appconfig.remoteServiceBaseUrl, // api 的 base_url
-    timeout: 15000, // request timeout //有的接口请求时间过长，超过此时间，显示为canceld
+    timeout: 30000, // request timeout //有的接口请求时间过长，超过此时间，显示为canceld
     paramsSerializer: function(params) {
       return Qs.stringify(params, {
             serializeDate: (date) => {
