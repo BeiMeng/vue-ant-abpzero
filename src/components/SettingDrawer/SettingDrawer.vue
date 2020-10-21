@@ -161,7 +161,7 @@
         </div>
       </div>
     </a-drawer>
-      <div class="setting-drawer-index-handle" @click="toggle">
+      <div class="setting-drawer-index-handle" :style="`right:${visible?'300px':'0px'}`" @click="toggle">
         <a-icon type="setting" v-if="!visible"/>
         <a-icon type="close" v-else/>
       </div>    
@@ -335,7 +335,7 @@ export default {
     background: #1890ff;
     width: 48px;
     height: 48px;
-    right: 0px;
+    //right: 0px;
     display: flex;
     justify-content: center;
     align-items: center;
