@@ -157,6 +157,7 @@ export default {
     handlerSaveData(data){
         data.assignedRoleNames=this.selectedRoleList;
         data.setRandomPassword=this.mainForm.setRandomPassword;
+        data.user.surname='admin'; //绕过后端此字段的验证
         return data;
     }, 
     handlerGoList(){

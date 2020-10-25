@@ -1,7 +1,8 @@
 <template>
   <div class="user-wrapper">
     <div class="content-box">
-      <a href="https://pro.loacg.com/docs/getting-started" target="_blank">
+      <chatBar></chatBar>
+      <a href="https://www.baidu.com" target="_blank">
         <span class="action">
           <a-icon type="question-circle-o"></a-icon>
         </span>
@@ -38,11 +39,13 @@
           </a-menu-item>
         </a-menu>
       </a-dropdown>
+
     </div>
   </div>
 </template>
 
 <script>
+import chatBar from '@/views/app/layout/chat/ChatBar'
 import NoticeIcon from '@/components/NoticeIcon'
 import { mapActions, mapGetters } from 'vuex'
 import { AppAuthService } from '@/abpZero/app/shared/common/auth/app-auth.service'
@@ -50,7 +53,7 @@ let _appAuthService = new AppAuthService()
 export default {
   name: 'UserMenu',
   components: {
-    NoticeIcon
+    NoticeIcon,chatBar
   },
   methods: {
     ...mapActions(['Logout']),

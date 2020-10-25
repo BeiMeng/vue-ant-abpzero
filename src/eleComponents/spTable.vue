@@ -12,21 +12,9 @@
             <el-button type="primary" @click="query">查 询</el-button>
         </el-form>             
     </div>
-    <div class="table-operator" :style="`text-align: ${opPosition}`">
-        <el-button v-if="isGranted(permissionNames.add)"  icon="md-add" type="success" @click="add">新建</el-button>
-        <slot name="moreBtns"></slot>
-    </div>
-    <el-table ref="tableList" :data="tableData" border style="width: 100%" @row-click="rowClick">
+    <el-table ref="tableList" :data="tableData" border style="width: 100%" @row-click="rowClick" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" header-align="center" align="center"></el-table-column>
         <slot name="tableItems"></slot>                  
-        <el-table-column v-if="isGranted(permissionNames.edit) || isGranted(permissionNames.del)" fixed="right" label="操作" width="120" header-align="center" align="center">
-            <template slot-scope="scope">
-                <el-row>
-                    <i v-if="isGranted(permissionNames.edit)" class="el-icon-edit rowEdit" title="编辑" @click="rowEdit(scope.row)"></i>
-                    <i v-if="isGranted(permissionNames.del)" class="el-icon-delete rowDel" title="删除" @click="rowDel(scope.row)"></i>
-                </el-row>
-            </template>
-        </el-table-column> 
     </el-table>
     <sPagination v-if="paged" ref="pagin" :request="request" :spSize.sync="pageSize" @paginationData="getPaginData" :serverPagin="sPagin"></sPagination>          
   </a-card>
@@ -34,7 +22,7 @@
 
 <script>
 export default {
-    name: 'crud',
+    name: 'spTable',
     props: {
         queryForm: {
             type: Object,
@@ -59,6 +47,11 @@ export default {
             type:Number,
             default:10
         },
+        //是否允许多选
+        multipleSelected:{
+            type:Boolean,
+            default:false
+        },        
         //服务端分页
         sPagin:{
             type:Boolean,
@@ -71,21 +64,8 @@ export default {
         },
         //数据Api
         apiUrl:{
-            type: Object,
-            default: {
-                queryList:'',
-                getById:'',
-                del:'',
-                save:''
-            }               
-        },
-        permissionNames:{
-            type: Object,
-            default: {
-                add:'',
-                edit:'',
-                del:''
-            }             
+            type:String,
+            default:''             
         },
         handlerQueryParams: {
             type: Function,
@@ -107,7 +87,7 @@ export default {
             // getter
             get: function () {
                     return {
-                    url:this.apiUrl.queryList,
+                    url:this.apiUrl,
                     type:'get'
                 }     
             },
@@ -123,13 +103,32 @@ export default {
 
         query() {
             this.loadTableData();
-        },
-        add(){
-
-        },        
+        },    
         rowClick(row, event, column) {
             this.$refs.tableList.toggleRowSelection(row, true);
-        },                
+        },  
+        handleSelectionChange(rows) {
+            if(!this.multipleSelected){
+                if (rows) {
+                    if(rows.length==0){
+                        this.selectDataId =null;
+                        return
+                    }
+                    for (let index = 0; index < rows.length - 1; index++) {
+                        const row = rows[index];
+                        this.$refs.tableList.toggleRowSelection(row, false);
+                    }
+                    this.$refs.tableList.toggleRowSelection(rows[rows.length - 1], true);
+                    this.selectDataId = rows[rows.length - 1][this.keyId];
+                    this.$emit('selectRows',rows[rows.length - 1]);
+                } else {
+                    this.$refs.tableList.clearSelection();
+                    this.selectDataId =null;
+                }
+            }else{
+                this.$emit('selectRows',rows);
+            }
+        },                      
         loadTableData(){
             let queryParams={};
             if(this.showQuery){
