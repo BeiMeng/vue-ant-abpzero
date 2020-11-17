@@ -6,6 +6,7 @@ import user from './modules/user'
 import permission from './modules/permission'
 import appSession from './modules/appSession'
 import tabView from './modules/tagsView'
+import chat from './modules/chat'
 import getters from './getters'
 
 Vue.use(Vuex)
@@ -16,7 +17,8 @@ export default new Vuex.Store({
     user,
     permission,
     appSession,
-    tabView
+    tabView,
+    chat
   },
   state: {
 

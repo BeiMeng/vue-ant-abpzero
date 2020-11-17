@@ -1,6 +1,7 @@
 <template>
   <div class="user-wrapper">
     <div class="content-box">
+      <chatBar></chatBar>
       <a href="https://www.baidu.com" target="_blank">
         <span class="action">
           <a-icon type="question-circle-o"></a-icon>
@@ -44,6 +45,7 @@
 </template>
 
 <script>
+import chatBar from '@/views/app/layout/chat/ChatBar'
 import NoticeIcon from '@/components/NoticeIcon'
 import { mapActions, mapGetters } from 'vuex'
 import { AppAuthService } from '@/abpZero/app/shared/common/auth/app-auth.service'
@@ -51,7 +53,7 @@ let _appAuthService = new AppAuthService()
 export default {
   name: 'UserMenu',
   components: {
-    NoticeIcon
+    NoticeIcon,chatBar
   },
   methods: {
     ...mapActions(['Logout']),
