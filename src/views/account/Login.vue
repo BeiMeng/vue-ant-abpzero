@@ -68,17 +68,10 @@ import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
 import { getSmsCaptcha, get2step } from '@/api/login'
 
-
-import { TokenService } from '@/abpZero/abp-vue-module/auth/token.service'
-import { UtilsService } from '@/abpZero/abp-vue-module/utils/utils.service'
-import { AppConsts } from '@/abpZero/shared/AppConsts'
-import { TokenAuthServiceProxy } from '@/abpZero/shared/service-proxies/TokenAuthServiceProxy'
 import { LocalStorageService } from '@/abpZero/shared/common/localStorage.Service'
-
-let _tokenAuthServiceProxy = new TokenAuthServiceProxy()
+import { TokenService } from '@/abpZero/abp-vue-module/auth/token.service'
 let _tokenService = new TokenService()
 let _localStorageService = new LocalStorageService()
-let _utilsService = new UtilsService()
 
 export default {
   components: {
@@ -103,14 +96,7 @@ export default {
     }
   },
   created () {
-    // get2step({ })
-    //   .then(res => {
-    //     this.requiredTwoStepCaptcha = res.result.stepCode
-    //   })
-    //   .catch(() => {
-    //     this.requiredTwoStepCaptcha = false
-    //   })
-    // this.requiredTwoStepCaptcha = true
+
   },
   methods: {
     ...mapActions(['Login', 'Logout']),
@@ -145,62 +131,22 @@ export default {
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         let rememberMe=true;
         if (!err) {
-            _tokenAuthServiceProxy.authenticate(
-              {
-                usernameOrEmailAddress: values.username,
-                password: values.password
-              }
-            )
-              .then(authenticateResult => {
-                //abp.ui.clearBusy()
-                // let tokenExpireDate = this.rememberMe ? (new Date(new Date().getTime() + 1000 * result.expireInSeconds)) : undefined
-                // _tokenService.setToken(result.accessToken, tokenExpireDate)
-                // _utilsService.setCookieValue(AppConsts.authorization.encrptedAuthTokenName, result.encryptedAccessToken, tokenExpireDate, abp.appPath)// PC端signalr使用              
-                //location.href = '/' // 登陆成功后，整个web程序重新加载
-                this.login(authenticateResult.accessToken, authenticateResult.encryptedAccessToken, authenticateResult.expireInSeconds, 
-                authenticateResult.refreshToken, authenticateResult.refreshTokenExpireInSeconds, rememberMe,
-                 authenticateResult.twoFactorRememberClientToken, '/');                  
-              })
-              .catch(error => {
-                state.loginBtn = false
-                //abp.ui.clearBusy()
-                console.error(error)
-              })
-
+            //to login
+            let userInfo={name:'aaa',profilePictureId:null};
+            let tokenExpireDate = rememberMe ? (new Date(new Date().getTime() + 1000 * 3600)) : undefined;
+            _tokenService.setToken('aaaaaa', tokenExpireDate); 
+            _localStorageService.setItem('userInfo', {
+                token: userInfo,
+                expireDate: tokenExpireDate
+            });                     
+            this.$store.dispatch('init',userInfo);
+            this.$router.push('/');           
         } else {
           setTimeout(() => {
             state.loginBtn = false
           }, 600)
         }
       })
-    },
-    login(accessToken, encryptedAccessToken, expireInSeconds, refreshToken, refreshTokenExpireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl) {
-        let tokenExpireDate = rememberMe ? (new Date(new Date().getTime() + 1000 * expireInSeconds)) : undefined;
-        _tokenService.setToken(accessToken, tokenExpireDate);
-        if (refreshToken && rememberMe) {
-            let refreshTokenExpireDate = rememberMe ? (new Date(new Date().getTime() + 1000 * refreshTokenExpireInSeconds)) : undefined;
-            _tokenService.setRefreshToken(refreshToken, refreshTokenExpireDate);
-        }
-        _localStorageService.setItem(AppConsts.authorization.encrptedAuthTokenName, {
-            token: encryptedAccessToken,
-            expireDate: tokenExpireDate
-        });
-        if (twoFactorRememberClientToken) {
-            _localStorageService.setItem(LoginService_1.twoFactorRememberClientTokenName, {
-                token: twoFactorRememberClientToken,
-                expireDate: new Date(new Date().getTime() + 365 * 86400000),
-            });
-        }
-        if (redirectUrl) {
-            location.href = redirectUrl;
-        }
-        else {
-            let initialUrl = UrlHelper.initialUrl;
-            if (initialUrl.indexOf('/account') > 0) {
-                initialUrl = AppConsts.appBaseUrl;
-            }
-            location.href = initialUrl;
-        }
     },
     getCaptcha (e) {
       e.preventDefault()

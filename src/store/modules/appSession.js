@@ -1,6 +1,4 @@
 
-import { SessionServiceProxy } from '@/abpZero/shared/service-proxies/SessionServiceProxy';
-let _sessionService=new SessionServiceProxy();
 const appSession = {
     state: {
       //application: null,
@@ -10,24 +8,12 @@ const appSession = {
     },
     mutations: {
         SET_APPSESSION(state, session) {
-            //state.application = session.application
-            state.user = session.user;
-            state.tenant = session.tenant;
-            state.theme = session.theme;             
+            state.user = session;          
         },         
     },
     actions: {
-        init({commit,state}){
-            return new Promise((resolve, reject) => {             
-                _sessionService.getCurrentLoginInformations()
-                .then(result=>{
-                    commit('SET_APPSESSION', result)        
-                    resolve(result);              
-                })
-                .catch(function (error) {
-                    reject(error);
-                });              
-            });
+        init({commit,state},userInfo){
+            commit('SET_APPSESSION', userInfo)  
         }
     }       
 }

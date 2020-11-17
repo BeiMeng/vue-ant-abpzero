@@ -12,14 +12,11 @@
           {{appDesc}}
         </div>
       </div>
-      <div v-if="showTenantChange()">
-          <tenantChange></tenantChange>
-      </div>
       <route-view></route-view>
 
       <div class="footer">
         <div class="copyright">
-          Copyright &copy; 2019 BeiDream出品
+          Copyright &copy; 2019 {{appTitle}}出品
         </div>
       </div>
     </div>
@@ -30,11 +27,10 @@
 import RouteView from './RouteView'
 import { mixinDevice } from '@/utils/mixin'
 import config from '@/config/defaultSettings'
-import tenantChange from '@/views/account/components/tenantChange'
 import { AppConsts } from '@/abpZero/shared/AppConsts'
 export default {
   name: 'UserLayout',
-  components: { RouteView,tenantChange },
+  components: { RouteView },
   mixins: [mixinDevice],
   data () {
     return {
@@ -49,12 +45,6 @@ export default {
     document.body.classList.remove('userLayout')
   },
   methods: {
-    showTenantChange() {
-      return abp.multiTenancy.isEnabled && !this.supportsTenancyNameInUrl();
-    },
-    supportsTenancyNameInUrl() {
-        return (AppConsts.appBaseUrlFormat && AppConsts.appBaseUrlFormat.indexOf(AppConsts.tenancyNamePlaceHolderInUrl) >= 0);
-    }
   },
 }
 </script>
