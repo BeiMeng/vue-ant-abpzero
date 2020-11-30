@@ -77,20 +77,20 @@ module.exports = {
     })
     if (process.env.NODE_ENV === 'production') {
       // #region 启用GZip压缩
-      config
-        .plugin('compression')
-        .use(CompressionPlugin, {
-          asset: '[path].gz[query]',
+      config.plugin('compressionPlugin')
+      .use(new CompressionPlugin({
+          filename: '[path].gz[query]',
           algorithm: 'gzip',
-          test: new RegExp('\\.(' + ['js', 'css'].join('|') + ')$'),
-          threshold: 10240,
-          minRatio: 0.8,
+          //exclude: /webConfig\.js$/,  //不允许被压缩的
+          test: new RegExp('\\.(' + ['js', 'css','json','html','txt','ico','svg'].join('|') + ')$'),  //允许被压缩
+          threshold: 10240, // 只有大小大于该值的资源会被处理 10240
+          minRatio: 0.8, // 只有压缩率小于这个值的资源才会被处理
+          deleteOriginalAssets: false, // 删除原文件
           cache: true
-        })
-        .tap(args => { })
+      }));
 
       // #endregion
-    }
+    } 
     /* svgRule.oneOf('inline')
       .resourceQuery(/inline/)
       .use('vue-svg-loader')
