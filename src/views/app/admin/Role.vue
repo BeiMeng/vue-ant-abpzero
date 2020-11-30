@@ -1,3 +1,8 @@
+<style lang="less" scoped>
+  .admin_Role{
+      height: 100%;
+  }
+</style>
 <template>
   <div class="admin_Role">
       <crud warp dataName="role" :showQuery="false" :paged="false" :mainForm="mainForm" :mainFormRule="mainFormRule" 

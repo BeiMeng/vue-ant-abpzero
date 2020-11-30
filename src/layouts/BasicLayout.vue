@@ -28,7 +28,7 @@
       :collapsible="true"
     ></side-menu>
 
-    <a-layout :class="[layoutMode, `content-width-${contentWidth}`]" :style="{ paddingLeft: contentPaddingLeft, minHeight: '100vh' }">
+    <a-layout :class="[layoutMode, `content-width-${contentWidth}`]" :style="{ paddingLeft: contentPaddingLeft, minHeight: '100vh',overflowY:'hidden'  }">
       <!-- layout header -->
       <global-header
         :mode="layoutMode"
@@ -53,7 +53,7 @@
       </a-layout-footer> -->
 
       <!-- Setting Drawer (show in development mode) -->
-      <setting-drawer v-if="!production"></setting-drawer>
+      <!-- <setting-drawer v-if="!production"></setting-drawer> -->
     </a-layout>
   </a-layout>
 

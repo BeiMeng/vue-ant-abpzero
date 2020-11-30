@@ -1,6 +1,6 @@
 <style lang='less' scoped>
   .admin_Tenant{
-
+       height: 100%;
   }
 </style>
 

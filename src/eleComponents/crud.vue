@@ -28,7 +28,7 @@
 </style>
 <template>
   <a-card :bordered="false" class="crud" v-loading="loading" element-loading-text="拼命加载中">
-    <div v-show="pageState=='list'">
+    <div v-show="pageState=='list'" style="height:100%">
         <div class="table-page-search-wrapper" v-show="showQuery">
             <el-form :inline="true" :model="queryForm" ref="queryForm">
                 <slot name="queryItems"></slot>
@@ -41,7 +41,7 @@
             <slot name="moreBtns"></slot>
         </div>
         <div :style="`height:${tableHeight}`">
-            <el-table ref="tableList" :data="tableData" border style="width: 100%" @row-click="rowClick">
+            <el-table ref="tableList" :data="tableData" border height="100%" @row-click="rowClick">
                 <!-- <el-table-column type="selection" width="55" header-align="center" align="center"></el-table-column> -->
                 <slot name="tableItems"></slot>                  
                 <el-table-column v-if="isGranted(permissionNames.edit) || isGranted(permissionNames.del)" label="操作" width="120" header-align="center" align="center">
@@ -54,7 +54,7 @@
                 </el-table-column> 
             </el-table>
         </div>
-        <sPagination @getDataFailed="getPaginationDataFailed" v-if="paged" ref="pagin" :request="request" :spSize.sync="spSize" @paginationData="getPaginData" :serverPagin="sPagin" @beforeGetData="beforeGetData"></sPagination>    
+        <sPagination background @getDataFailed="getPaginationDataFailed" v-if="paged" ref="pagin" :request="request" :spSize.sync="spSize" @paginationData="getPaginData" :serverPagin="sPagin" @beforeGetData="beforeGetData"></sPagination>    
     </div>
     <div v-show="pageState!='list'">
         <div class="table-operator" :style="`text-align: ${opPosition}`">

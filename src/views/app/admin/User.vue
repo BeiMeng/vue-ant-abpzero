@@ -1,6 +1,6 @@
 <style lang="less" scoped>
   .admim_user{
-
+      height: 100%;
   }
 </style>
 
