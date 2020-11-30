@@ -14,7 +14,18 @@
         }      
   }
 </style>
+<style lang="less">
+  .crud{
+    .ant-card-body {
+        height: 100%;
+        padding: 12px !important;
 
+    }
+    .ant-divider-horizontal {
+        margin: 0 0 12px 0 !important;
+    }        
+  }
+</style>
 <template>
   <a-card :bordered="false" class="crud" v-loading="loading" element-loading-text="拼命加载中">
     <div v-show="pageState=='list'">
@@ -29,18 +40,20 @@
             <el-button v-if="isGranted(permissionNames.add)"  icon="el-icon-plus" type="success" @click="add">新增</el-button>
             <slot name="moreBtns"></slot>
         </div>
-        <el-table ref="tableList" :data="tableData" border style="width: 100%" @row-click="rowClick">
-            <!-- <el-table-column type="selection" width="55" header-align="center" align="center"></el-table-column> -->
-            <slot name="tableItems"></slot>                  
-            <el-table-column v-if="isGranted(permissionNames.edit) || isGranted(permissionNames.del)" label="操作" width="120" header-align="center" align="center">
-                <template slot-scope="scope">
-                    <el-row>
-                        <i v-if="isGranted(permissionNames.edit)" class="el-icon-edit rowEdit" title="编辑" @click="rowEdit(scope.row)"></i>
-                        <i v-if="isGranted(permissionNames.del)" class="el-icon-delete rowDel" title="删除" @click="rowDel(scope.row)"></i>
-                    </el-row>
-                </template>
-            </el-table-column> 
-        </el-table>
+        <div :style="`height:${tableHeight}`">
+            <el-table ref="tableList" :data="tableData" border style="width: 100%" @row-click="rowClick">
+                <!-- <el-table-column type="selection" width="55" header-align="center" align="center"></el-table-column> -->
+                <slot name="tableItems"></slot>                  
+                <el-table-column v-if="isGranted(permissionNames.edit) || isGranted(permissionNames.del)" label="操作" width="120" header-align="center" align="center">
+                    <template slot-scope="scope">
+                        <el-row>
+                            <i v-if="isGranted(permissionNames.edit)" class="el-icon-edit rowEdit" title="编辑" @click="rowEdit(scope.row)"></i>
+                            <i v-if="isGranted(permissionNames.del)" class="el-icon-delete rowDel" title="删除" @click="rowDel(scope.row)"></i>
+                        </el-row>
+                    </template>
+                </el-table-column> 
+            </el-table>
+        </div>
         <sPagination @getDataFailed="getPaginationDataFailed" v-if="paged" ref="pagin" :request="request" :spSize.sync="spSize" @paginationData="getPaginData" :serverPagin="sPagin" @beforeGetData="beforeGetData"></sPagination>    
     </div>
     <div v-show="pageState!='list'">
@@ -196,6 +209,14 @@ export default {
         }
     },
     computed: {
+        tableHeight: function () {
+            if(this.paged && this.showQuery){
+                return 'calc(100% - 160px)'
+            }
+            if(!this.paged && !this.showQuery){
+                return 'calc(100% - 70px)'
+            }            
+        },        
         //（分页模式才有此计算属性）
         request:{
             // getter
