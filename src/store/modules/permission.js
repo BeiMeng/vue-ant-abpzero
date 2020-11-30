@@ -4,7 +4,7 @@ let _permission=new PermissionCheckerService();
 
 
 import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
-
+import { bxAnaalyse } from '@/core/icons'
  // demo
 let demoRouterMap={
   path: '/demo',
@@ -394,7 +394,141 @@ function warpAsyncRouters(routerMap){
   }
 }
 
+//根据后端返回的菜单动态生成路由
+let rootCode='0000'; //顶级菜单编码
+function createAsyncRouterMap(allMenus){
+  let obj=createTree(allMenus,rootCode);
+  let asyncRouterMapServer = [
+    {
+      path: '/',
+      name: 'index',
+      component: BasicLayout,
+      meta: { title: '首页' },
+      redirect: '/dashboard/analysis',
+      children: [
+        // dashboard
+        {
+          path: '/dashboard',
+          name: 'dashboard',
+          redirect: '/dashboard/analysis',
+          component: PageView,
+          hideChildrenInMenu: true, //设置子项隐藏
+          meta: { title: '首页', keepAlive: true, icon: 'home'},
+          children: [
+            {
+              path: '/dashboard/analysis',
+              name: 'dashboard_analysis',
+              hiddenHeaderContent:true,
+              component: () => import('@/views/app/dashboard/Analysis'),
+              meta: { title: '首页', keepAlive: false,noClosable:true, hiddenHeaderContent: true }
+            }
+          ]
+        },        
+      ]
+    },
+    {
+      path: '*', redirect: '/404', hidden: true
+    }
+  ];
+  obj.routers.forEach(element => {
+    asyncRouterMapServer[0].children.push(element);
+  });
+  return asyncRouterMapServer; //从后端返回的菜单配置动态生成路由
+}
+function createTree(array,parentIdValue){
+  let tree = [];
+  let routers = [];
+  let parentIdProperty='parentCode'; 
+  let idProperty='menuCode'; 
+   let childrenProperty='children';
+  let nodes = _.filter(array, [parentIdProperty, parentIdValue]);
 
+  _.forEach(nodes, node => {
+      let d=new Object();
+      d=_.cloneDeep(node);
+      let obj=createTree(
+        array,
+        d[idProperty]
+      )
+      let children=obj.tree;
+      let item;
+      if(d.menuType==1){   //非页面,上级菜单路由配置
+        item={
+          path: `/${d.menuUrl}`,
+          name: d.menuUrl,
+          component: d.parentCode==rootCode?PageView:null,   //null 非页面且非顶级菜单
+          meta: { title:d.menuName, keepAlive: true, icon: d.icon, permission: [ d.permission ] },
+        }
+      }else{  //页面
+        let strArr=d.menuUrl.split('/');          
+        if(d.parentCode==rootCode){   //顶级页面，与首页同一层级的路由配置
+          item={
+            path: `/${strArr[strArr.length-2]}/${strArr[strArr.length-1]}`,
+            name: `${strArr[strArr.length-2]}_${strArr[strArr.length-1]}`,
+            component: PageView,
+            redirect: `/${strArr[strArr.length-2]}/${strArr[strArr.length-1]}`,   //必须设置redirect 点击tab才能对应到左侧菜单项
+            hideChildrenInMenu: true, //设置子项隐藏
+            meta: { title:d.menuName, keepAlive: true, icon: d.icon, permission: [ d.permission ] },
+            children: [
+              {
+                path: `/${strArr[strArr.length-2]}/${strArr[strArr.length-1]}`,
+                name: `${strArr[strArr.length-2]}_${strArr[strArr.length-1]}`,
+                component: () => import(`@/views/app/${d.menuUrl}`),
+                meta: { title:d.menuName, keepAlive: true}
+              }
+            ]
+          }          
+        }else{   //页面路由配置
+          item={
+            path: `/${strArr[strArr.length-2]}/${strArr[strArr.length-1]}`,
+            name: `${strArr[strArr.length-2]}_${strArr[strArr.length-1]}`,
+            component: () => import(`@/views/app/${d.menuUrl}`),
+            //component: resolve => require([`@/views/app/${d.menuUrl}`], resolve),
+            meta: { title:d.menuName, keepAlive: true, icon: d.icon, permission: [ d.permission ] }
+          }
+        }
+      }
+      d[childrenProperty] = children
+      if(children.length>0){
+        item[childrenProperty]=obj.routers
+      }      
+      tree.push(d);
+      routers.push(item);  
+  });
+
+  return {tree,routers};
+}
+
+
+
+
+
+
+let menus=[
+  {"menuId":99,"permission":"Pages.Tenants","menuCode":"1111","menuName":"租户管理","menuUrl":"admin/Tenant","menuType":2,"parentCode":"0000","isEnabled":1,"icon":"appstore","subMenu":null},
+  // {"menuId":1,"menuCode":"1000","menuName":"节目源","menuUrl":"program","menuType":1,"parentCode":"0000","isEnabled":1,"icon":"appstore","subMenu":null},
+  // {"menuId":2,"menuCode":"100001","menuName":"节目类型","menuUrl":"program/type","menuType":2,"parentCode":"1000","isEnabled":1,"icon":"user","subMenu":null},
+  // {"menuId":4,"menuCode":"100002","menuName":"节目管理","menuUrl":"program/item","menuType":2,"parentCode":"1000","isEnabled":1,"icon":"user","subMenu":null},
+  // {"menuId":6,"menuCode":"100004","menuName":"节目指南管理","menuUrl":"program/guide","menuType":2,"parentCode":"1000","isEnabled":1,"icon":"user","subMenu":null},
+  // {"menuId":10,"menuCode":"1001","menuName":"套餐订阅","menuUrl":"package","menuType":1,"parentCode":"0000","isEnabled":1,"icon":"star","subMenu":null},
+  // {"menuId":13,"menuCode":"100101","menuName":"套餐管理","menuUrl":"package/pmanage","menuType":2,"parentCode":"1001","isEnabled":1,"icon":"user","subMenu":null},
+  // {"menuId":14,"menuCode":"100102","menuName":"套餐订购","menuUrl":"package/porder","menuType":2,"parentCode":"1001","isEnabled":1,"icon":"user","subMenu":null},
+  // {"menuId":16,"menuCode":"100103","menuName":"销售统计","menuUrl":"package/sales","menuType":2,"parentCode":"1001","isEnabled":1,"icon":"user","subMenu":null},
+  // {"menuId":17,"menuCode":"1003","menuName":"广告管理","menuUrl":"advert","menuType":1,"parentCode":"0000","isEnabled":1,"icon":"link","subMenu":null},
+  // {"menuId":18,"menuCode":"100301","menuName":"启动页广告","menuUrl":"advert/adlaunch","menuType":2,"parentCode":"1003","isEnabled":1,"icon":"user","subMenu":null},
+  // {"menuId":19,"menuCode":"100302","menuName":"映前广告","menuUrl":"advert/adstart","menuType":2,"parentCode":"1003","isEnabled":1,"icon":"user","subMenu":null},
+  // {"menuId":21,"menuCode":"100303","menuName":"映中广告","menuUrl":"advert/adcenter","menuType":2,"parentCode":"1003","isEnabled":1,"icon":"user","subMenu":null},
+  // {"menuId":22,"menuCode":"100304","menuName":"广告播放统计","menuUrl":"advert/adreport","menuType":2,"parentCode":"1003","isEnabled":1,"icon":"user","subMenu":null},
+  {"menuId":23,"permission":"Pages.Administration","menuCode":"1004","menuName":"系统配置","menuUrl":"admin","menuType":1,"parentCode":"0000","isEnabled":1,"icon":"setting","subMenu":null},
+  {"menuId":24,"permission":"Pages.Administration.Users","menuCode":"100401","menuName":"用户管理","menuUrl":"admin/User","menuType":2,"parentCode":"1004","isEnabled":1,"icon":"user","subMenu":null},
+  {"menuId":25,"permission":"Pages.Administration.Roles","menuCode":"100402","menuName":"角色管理","menuUrl":"admin/Role","menuType":2,"parentCode":"1004","isEnabled":1,"icon":"user","subMenu":null},
+  // {"menuId":26,"menuCode":"100403","menuName":"信源分区配置","menuUrl":"admin/signal","menuType":2,"parentCode":"1004","isEnabled":1,"icon":"user","subMenu":null},
+  // {"menuId":27,"menuCode":"100404","menuName":"节目源码率配置","menuUrl":"admin/source","menuType":2,"parentCode":"1004","isEnabled":1,"icon":"user","subMenu":null},
+  // {"menuId":30,"menuCode":"100406","menuName":"多级菜单","menuUrl":"admin_test","menuType":1,"parentCode":"1004","isEnabled":1,"icon":"user","subMenu":null},  
+  // {"menuId":32,"menuCode":"10040601","menuName":"多级菜单1","menuUrl":"admin/test/test","menuType":2,"parentCode":"100406","isEnabled":1,"icon":"user","subMenu":null},
+  // {"menuId":33,"menuCode":"10040602","menuName":"多级菜单2","menuUrl":"admin/test/test1","menuType":2,"parentCode":"100406","isEnabled":1,"icon":"user","subMenu":null},  
+  // {"menuId":28,"menuCode":"100405","menuName":"移动端系统升级配置","menuUrl":"admin/app","menuType":2,"parentCode":"1004","isEnabled":1,"icon":"user","subMenu":null}
+]
 
 const permission = {
   state: {
@@ -416,8 +550,10 @@ const permission = {
   actions: {
     GenerateRoutes ({ commit }, data) {
       return new Promise(resolve => {
-        const { permissionList } = data        
-        let allAsyncRouterMap=asyncRouterMap;
+        const { permissionList } = data
+        let allAsyncRouterMap=createAsyncRouterMap(menus); 
+        console.log(allAsyncRouterMap);       
+        //let allAsyncRouterMap=asyncRouterMap;
         if(process.env.NODE_ENV !== 'production'){    //开发环境加载demo页面
           allAsyncRouterMap[0].children.push(demoRouterMap)
         }        
