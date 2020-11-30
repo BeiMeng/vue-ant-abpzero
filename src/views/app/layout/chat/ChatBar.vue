@@ -21,7 +21,7 @@
       :closable="true"
       :visible="isOpen"
       :maskClosable="false"
-      :mask="false"
+      :mask="true"
       width="350px"
       @close="onClose"
     >
